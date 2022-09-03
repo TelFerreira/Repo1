@@ -1,0 +1,90 @@
+.header-background {
+  background-color: #39639c;
+}
+
+.logo-wrapper {
+  padding-left: 3vw;
+}
+
+.footer-wrapper {
+  background-color: #c8d1db;
+}
+
+.card_login {
+  border: 0;
+}
+
+.a-color {
+  color: white !important;
+  padding-right: 3vw;
+  padding-left: 3vw;
+  font-size: calc(0.6vw + 0.2vh + 2vmin);
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.justify-content-center {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 65vh;
+}
+
+.forms-inputs {
+  position: relative;
+}
+
+.forms-inputs span {
+  position: absolute;
+  top: -18px;
+  left: 10px;
+  color: silver;
+  background-color: #fff;
+  padding: 5px 10px;
+  font-size: 15px;
+}
+.forms-inputs input {
+  height: 50px;
+  border: 2px solid #eee;
+  width: 100%;
+}
+
+.forms-inputs input:focus {
+  box-shadow: none;
+  outline: none;
+  border: 2px solid #000;
+}
+
+.alerts-wrapper {
+  width: auto;
+  margin-top: 5px;
+}
+
+.alert {
+  position: relative;
+  padding: 2px 0rem;
+  font-size: 14px;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+}
+
+.btn {
+  height: 50px;
+  width: 100%;
+}
+
+.btn:hover {
+  background-color: #777f88 !important;
+}
+
+.btn-color {
+  background-color: #16273e !important;
+  color: white !important;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.success-data {
+  display: flex;
+  flex-direction: column;
+}

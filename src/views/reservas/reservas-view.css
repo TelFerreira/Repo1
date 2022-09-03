@@ -1,0 +1,8 @@
+.camposInput {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.inativo {
+  background-color: rgba(255, 70, 70, 0.199);
+}
