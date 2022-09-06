@@ -12,14 +12,17 @@ const SalaLimpeza = (entrada) => {
     if (entrada.dataIncial.length != 0 && entrada.dataFinal.length != 0) {
       if (entrada.idCentro.length != 0 && entrada.idCentro != 0) {
         axios
-          .get("https://softinsa-reunions-back.herokuapp.com/reservas/getListByDateIntervalByCenter", {
-            headers: authHeader(),
-            params: {
-              dataIncial: entrada.dataIncial,
-              dataFinal: entrada.dataFinal,
-              idCentro: entrada.idCentro,
-            },
-          })
+          .get(
+            "https://backend-pint2022.herokuapp.com/reservas/getListByDateIntervalByCenter",
+            {
+              headers: authHeader(),
+              params: {
+                dataIncial: entrada.dataIncial,
+                dataFinal: entrada.dataFinal,
+                idCentro: entrada.idCentro,
+              },
+            }
+          )
           .then((res) => {
             setTableInfo(res.data.data);
           })
@@ -28,13 +31,16 @@ const SalaLimpeza = (entrada) => {
           });
       } else {
         axios
-          .get("https://softinsa-reunions-back.herokuapp.com/reservas/getListByDateInterval", {
-            headers: authHeader(),
-            params: {
-              dataIncial: entrada.dataIncial,
-              dataFinal: entrada.dataFinal,
-            },
-          })
+          .get(
+            "https://backend-pint2022.herokuapp.com/reservas/getListByDateInterval",
+            {
+              headers: authHeader(),
+              params: {
+                dataIncial: entrada.dataIncial,
+                dataFinal: entrada.dataFinal,
+              },
+            }
+          )
           .then((res) => {
             setTableInfo(res.data.data);
           })
@@ -47,7 +53,7 @@ const SalaLimpeza = (entrada) => {
 
   function eliminar(id) {
     axios
-      .delete("https://softinsa-reunions-back.herokuapp.com/reservas/delete/" + id)
+      .delete("https://backend-pint2022.herokuapp.com/reservas/delete/" + id)
       .then((response) => {
         if (response.data.success) {
           alert("Reserva Eliminada");
@@ -63,34 +69,42 @@ const SalaLimpeza = (entrada) => {
 
   return (
     <>
-      <Table>
+      <Table className="w-75 mx-auto" striped bordered hover>
         <thead>
           <tr>
-            <th>Id</th>
-            <th>Reservador</th>
+            <th>De</th>
             <th>Data</th>
-            <th>Periodo de Reunião</th>
-            <th>Nome da Sala</th>
+            <th>Inicio - Fim</th>
+            <th>Sala</th>
             <th>Descrição</th>
-            <th>Cancelada</th>
-            <th>Nrº Participantes</th>
+            <th>Estado</th>
+            <th>Participantes</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
           {tableInfo.map((info, index) => (
             <tr>
-              <td>{info.id_reserva}</td>
-              <td>{info.Utilizadore.primeironome + " " + info.Utilizadore.sobrenome} </td>
+              <td>
+                {info.Utilizadore.primeironome +
+                  " " +
+                  info.Utilizadore.sobrenome}{" "}
+              </td>
               <td>{info.dataReserva}</td>
-              <td>{info.horaInicio.slice(0, 5) + " - " + info.horaFim.slice(0, 5)}</td>
+              <td>
+                {info.horaInicio.slice(0, 5) + " - " + info.horaFim.slice(0, 5)}
+              </td>
               <td>{info.Sala.nomesala}</td>
               <td>{info.descricao}</td>
               <td>{info.cancelado ? "Cancelada" : "Ativa"}</td>
               <td>{info.nr_participantes}</td>
               <td>
-                <Button variant="outlined" color="error" onClick={() => eliminar(info.id_reserva)}>
+                <button
+                  className="btn btn-danger h-50"
+                  onClick={() => eliminar(info.id_reserva)}
+                >
                   Eliminar
-                </Button>
+                </button>
               </td>
             </tr>
           ))}

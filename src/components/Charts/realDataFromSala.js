@@ -29,9 +29,13 @@ const RealDataFromSala = (entrada) => {
   useEffect(() => {
     if (entrada.salaSelecionada.length != 0 && entrada.salaSelecionada != 0) {
       axios
-        .get("https://softinsa-reunions-back.herokuapp.com/reservas/getListBySalaTodayTomorrow/" + entrada.salaSelecionada, {
-          headers: authHeader(),
-        })
+        .get(
+          "https://backend-pint2022.herokuapp.com/reservas/getListBySalaTodayTomorrow/" +
+            entrada.salaSelecionada,
+          {
+            headers: authHeader(),
+          }
+        )
         .then((res) => {
           console.log(res.data.data);
           setTableInfo(res.data.data);
@@ -40,9 +44,13 @@ const RealDataFromSala = (entrada) => {
     } else {
       if (entrada.centroSelecionado.length != 0) {
         axios
-          .get("https://softinsa-reunions-back.herokuapp.com/reservas/getListByCentroTodayTomorrow/" + entrada.centroSelecionado, {
-            headers: authHeader(),
-          })
+          .get(
+            "https://backend-pint2022.herokuapp.com/reservas/getListByCentroTodayTomorrow/" +
+              entrada.centroSelecionado,
+            {
+              headers: authHeader(),
+            }
+          )
           .then((res) => {
             console.log(res.data.data);
             setTableInfo(res.data.data);
@@ -57,14 +65,11 @@ const RealDataFromSala = (entrada) => {
       <Table>
         <thead>
           <tr>
-            <th>Id</th>
-            <th>Reservador</th>
-            <th>Data de Reserva</th>
+            <th>De</th>
+            <th>Data</th>
             <th>Inicio - Fim</th>
-            <th>Final de Limpeza</th>
-            <th>Descrição</th>
             <th>Sala</th>
-            <th>Nrº Participantes</th>
+            <th>Participantes</th>
           </tr>
         </thead>
         <tbody>
@@ -74,12 +79,17 @@ const RealDataFromSala = (entrada) => {
             })
             .map((info, index) => (
               <tr>
-                <td>{info.id_reserva}</td>
-                <td>{info.Utilizadore.primeironome + " " + info.Utilizadore.sobrenome} </td>
+                <td>
+                  {info.Utilizadore.primeironome +
+                    " " +
+                    info.Utilizadore.sobrenome}{" "}
+                </td>
                 <td>{info.dataReserva}</td>
-                <td>{info.horaInicio.slice(0, 5) + " - " + formatFimByLimpeza(info.horaFim, info.Sala.tempo_limpeza)}</td>
-                <td>{info.horaFim.slice(0, 5)}</td>
-                <td>{info.descricao}</td>
+                <td>
+                  {info.horaInicio.slice(0, 5) +
+                    " - " +
+                    formatFimByLimpeza(info.horaFim, info.Sala.tempo_limpeza)}
+                </td>
                 <td>{info.Sala.nomesala}</td>
                 <td>{info.nr_participantes}</td>
               </tr>

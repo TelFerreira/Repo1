@@ -34,7 +34,10 @@ const EditarSala = () => {
   const [listacentro, setListaCentro] = useState([]);
 
   function getCurrentUser() {
-    if (storageUser) AuthService.getCurrentUser(storageUser.token).then((response) => setcurrentUser(response));
+    if (storageUser)
+      AuthService.getCurrentUser(storageUser.token).then((response) =>
+        setcurrentUser(response)
+      );
   }
 
   function isUserLogged() {
@@ -44,7 +47,8 @@ const EditarSala = () => {
   }
 
   async function updateSalaStatus(activeStatus) {
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/salas/updateStatus/" + salaID;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/salas/updateStatus/" + salaID;
     const datapost = {
       activeStatus: activeStatus,
     };
@@ -64,8 +68,16 @@ const EditarSala = () => {
   }
 
   function updateSalaData() {
-    if (nomeSala !== "" && descricao !== "" && alocacaoMaxima !== "" && percentAlocacao !== "" && tempoLimpeza !== "" && idCentro !== "") {
-      const baseUrl = "https://softinsa-reunions-back.herokuapp.com/salas/update/" + salaID;
+    if (
+      nomeSala !== "" &&
+      descricao !== "" &&
+      alocacaoMaxima !== "" &&
+      percentAlocacao !== "" &&
+      tempoLimpeza !== "" &&
+      idCentro !== ""
+    ) {
+      const baseUrl =
+        "https://backend-pint2022.herokuapp.com/salas/update/" + salaID;
       const datapost = {
         nomesala: nomeSala,
         descricao: descricao,
@@ -104,7 +116,9 @@ const EditarSala = () => {
   useEffect(() => {
     //Get informação da sala a editar
     axios
-      .get("https://softinsa-reunions-back.herokuapp.com/salas/get/" + salaID, { headers: authHeader() })
+      .get("https://backend-pint2022.herokuapp.com/salas/get/" + salaID, {
+        headers: authHeader(),
+      })
       .then((res) => {
         if (res.data.success) {
           setNomeSala(res.data.data.nomesala);
@@ -124,7 +138,9 @@ const EditarSala = () => {
 
     //Get lista de centros disponiveis
     axios
-      .get("https://softinsa-reunions-back.herokuapp.com/centros/listActiveCenters", { headers: authHeader() })
+      .get("https://backend-pint2022.herokuapp.com/centros/listActiveCenters", {
+        headers: authHeader(),
+      })
       .then((res) => {
         if (res.data.success) {
           setListaCentro(res.data.data);
@@ -136,7 +152,9 @@ const EditarSala = () => {
         setError(error.toString());
       });
 
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/user/passwordNeedsUpdate/" + storageUser.token;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/user/passwordNeedsUpdate/" +
+      storageUser.token;
     axios
       .post(baseUrl, { headers: authHeader() })
       .then((response) => {
@@ -151,67 +169,131 @@ const EditarSala = () => {
   }, []);
 
   return (
-    <div className="home">
-      <Sidebar />
-      <div className="homeContainer">
-        <Navbar title={"Editar Sala"} user={currentUser} />
-        <div className="pageContent">
-          <Form noValidate validated={validated} onSubmit={checkSubmitValues}>
-            <Form.Group className="mb-3" controlId="nomeSala">
-              <Form.Label>Nome Sala</Form.Label>
-              <Form.Control required type="text" placeholder="Introduza nome" value={nomeSala} onChange={(value) => setNomeSala(value.target.value)} />
-              <Form.Control.Feedback type="invalid">Insira um nome.</Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="descricao">
-              <Form.Label>Descrição</Form.Label>
-              <Form.Control required type="text" placeholder="Introduza descrição" value={descricao} onChange={(value) => setDescricao(value.target.value)} />
-              <Form.Control.Feedback type="invalid">Insira uma descrição.</Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="alocacaoMaxima">
-              <Form.Label>Alocação Máxima (nr.)</Form.Label>
-              <Form.Control required type="text" placeholder="Introduza alocação máxima" value={alocacaoMaxima} onChange={(value) => setAlocacaoMaxima(value.target.value)} />
-              <Form.Control.Feedback type="invalid">Insira uma alocação máxima.</Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="percentAlocacao">
-              <Form.Label>Percentagem de Alocação (%)</Form.Label>
-              <Form.Control required type="text" placeholder="Introduza uma percentagem de alocação" value={percentAlocacao} onChange={(value) => setPercentAlocacao(value.target.value)} />
-              <Form.Control.Feedback type="invalid">Insira uma percentagem de alocação.</Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="tempoLimpeza">
-              <Form.Label>Tempo de Limpeza (min.)</Form.Label>
-              <Form.Control required type="text" placeholder="Introduza o tempo de limpeza" value={tempoLimpeza} onChange={(value) => setTempoLimpeza(value.target.value)} />
-              <Form.Control.Feedback type="invalid">Insira o tempo de limpeza.</Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Centro</Form.Label>
-              <Form.Select required value={idCentro} onChange={(value) => setIdCentro(value.target.value)}>
-                <option defaultValue={0}>Escolha um Centro</option>
-                {listacentro?.map((centro, index) => (
-                  <option key={index} value={centro.id_centro}>
-                    {centro.nomecentro}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-            {activeStatus ? (
-              <Button onClick={() => updateSalaStatus(false)} sx={{ marginRight: 1 }} variant="outlined" color="secondary">
-                Inativar
-              </Button>
-            ) : (
-              <Button onClick={() => updateSalaStatus(true)} sx={{ marginRight: 1 }} variant="outlined" color="secondary">
-                Ativar
-              </Button>
-            )}
-            <Button type="submit" sx={{ marginRight: 1 }} variant="outlined" color="success">
-              Confirmar Alterações
-            </Button>
-            <Button href={"/salas"} sx={{ marginRight: 1 }} variant="outlined" color="error">
-              Cancelar
-            </Button>
-          </Form>
+    <>
+      <Navbar title={"Editar Sala"} user={currentUser} />
+      <h2 className="text-center mt-5">Alterar Sala</h2>
+
+      <Form
+        className="d-flex flex-column mt-3"
+        style={{
+          width: "fit-content",
+          marginInline: "auto",
+          minWidth: "500px",
+        }}
+        noValidate
+        validated={validated}
+        onSubmit={checkSubmitValues}
+      >
+        <Form.Group className="mb-3" controlId="nomeSala">
+          <Form.Label>Nome</Form.Label>
+          <Form.Control
+            required
+            type="text"
+            placeholder="Introduza nome"
+            value={nomeSala}
+            onChange={(value) => setNomeSala(value.target.value)}
+          />
+          <Form.Control.Feedback type="invalid">
+            Campo Obrigatório.
+          </Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="descricao">
+          <Form.Label>Descrição</Form.Label>
+          <Form.Control
+            required
+            type="text"
+            as="textarea"
+            placeholder="Descrição"
+            value={descricao}
+            onChange={(value) => setDescricao(value.target.value)}
+          />
+          <Form.Control.Feedback type="invalid">
+            Campo Obrigatório.
+          </Form.Control.Feedback>
+        </Form.Group>
+        <div className="d-flex gap-2">
+          <Form.Group className="mb-3 w-100" controlId="alocacaoMaxima">
+            <Form.Label>Alocação Máxima</Form.Label>
+            <Form.Control
+              required
+              type="text"
+              placeholder="Alocação Máxima"
+              value={alocacaoMaxima}
+              onChange={(value) => setAlocacaoMaxima(value.target.value)}
+            />
+            <Form.Control.Feedback type="invalid">
+              Campo Obrigatório.
+            </Form.Control.Feedback>
+          </Form.Group>
+          <Form.Group className="mb-3 w-100" controlId="percentAlocacao">
+            <Form.Label>Alocação Permitida (%)</Form.Label>
+            <Form.Control
+              required
+              type="text"
+              placeholder="Alocação Permitida (%)"
+              value={percentAlocacao}
+              onChange={(value) => setPercentAlocacao(value.target.value)}
+            />
+
+            <Form.Control.Feedback type="invalid">
+              Campo Obrigatório.
+            </Form.Control.Feedback>
+          </Form.Group>
         </div>
-      </div>
-    </div>
+        <Form.Group className="mb-3" controlId="tempoLimpeza">
+          <Form.Label>Tempo Limpeza</Form.Label>
+          <Form.Control
+            required
+            type="text"
+            placeholder="Tempo de limpeza"
+            value={tempoLimpeza}
+            onChange={(value) => setTempoLimpeza(value.target.value)}
+          />
+          <Form.Control.Feedback type="invalid">
+            Campo Obrigatório.
+          </Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Select
+            required
+            value={idCentro}
+            onChange={(value) => setIdCentro(value.target.value)}
+          >
+            <option defaultValue={0}>Centro</option>
+            {listacentro?.map((centro, index) => (
+              <option key={index} value={centro.id_centro}>
+                {centro.nomecentro}
+              </option>
+            ))}
+          </Form.Select>
+        </Form.Group>
+        <div className="d-flex gap-2">
+          {activeStatus ? (
+            <button
+              className="btn btn-warning h-50"
+              style={{ width: "fit-content" }}
+              onClick={() => updateSalaStatus(false)}
+            >
+              Inativar
+            </button>
+          ) : (
+            <button
+              className="btn btn-success h-50"
+              style={{ width: "fit-content" }}
+              onClick={() => updateSalaStatus(true)}
+            >
+              Ativar
+            </button>
+          )}
+          <a className="btn btn-danger h-50" href={"/salas"}>
+            Cancelar
+          </a>
+          <button className="btn btn-success h-50" type="submit">
+            Confirmar Alterações
+          </button>
+        </div>
+      </Form>
+    </>
   );
 };
 

@@ -6,10 +6,6 @@
   padding-left: 3vw;
 }
 
-.footer-wrapper {
-  background-color: #c8d1db;
-}
-
 .card_login {
   border: 0;
 }
@@ -73,15 +69,13 @@
   width: 100%;
 }
 
-.btn:hover {
-  background-color: #777f88 !important;
+.textHeader {
+  font-size: 55px;
+  font-weight: bold;
 }
 
-.btn-color {
-  background-color: #16273e !important;
-  color: white !important;
-  font-weight: bold;
-  font-size: 20px;
+.btn:hover {
+  background-color: #777f88 !important;
 }
 
 .success-data {

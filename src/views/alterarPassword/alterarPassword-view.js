@@ -1,26 +1,20 @@
-import React, { useEffect, useState } from "react";
-import AuthService from "../../services/auth.service";
-import Navbar from "../../components/Navbar";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-import authHeader from "../../services/auth-header";
-import Sidebar from "../../components/Sidebar";
-import { Form } from "react-bootstrap";
 import Button from "@mui/material/Button";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Form } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../../components/Navbar";
+import authHeader from "../../services/auth-header";
+import AuthService from "../../services/auth.service";
 
 const AlterarPassword = () => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [currentUser, setcurrentUser] = useState("");
   const { user: storageUser } = useSelector((state) => state.auth);
 
   const [validated, setValidated] = useState(false);
-
-  const [utilizadorID, setUtilizadorID] = useState(useParams().id);
-  const [error, setError] = useState();
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmnewPassword, setConfirmNewPassword] = useState("");
@@ -28,21 +22,17 @@ const AlterarPassword = () => {
   const [greenmessage, setGreenMessage] = useState("");
   const [redmessage, setRedMessage] = useState("");
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-
   function getCurrentUser() {
-    if (storageUser) AuthService.getCurrentUser(storageUser.token).then((response) => setcurrentUser(response));
+    if (storageUser)
+      AuthService.getCurrentUser(storageUser.token).then((response) =>
+        setcurrentUser(response)
+      );
   }
 
   function isUserLogged() {
     if (!storageUser) {
       navigate("/login");
     }
-  }
-
-  function clearFormData() {
-    document.getElementById("input-form").reset();
   }
 
   const checkSubmitValues = (event) => {
@@ -57,11 +47,13 @@ const AlterarPassword = () => {
   };
 
   function updatePassword() {
-    if (newPassword !== "" && confirmnewPassword !== "") {
-      if (newPassword == confirmnewPassword) {
-        const baseUrl = "https://softinsa-reunions-back.herokuapp.com/user/updatePasswordFirstLogin/" + currentUser.id_utilizador;
+    if (newPassword.trim() !== "" && confirmnewPassword.trim() !== "") {
+      if (newPassword.trim() === confirmnewPassword.trim()) {
+        const baseUrl =
+          "https://backend-pint2022.herokuapp.com/user/updatePasswordFirstLogin/" +
+          currentUser.id_utilizador;
         const datapost = {
-          password: newPassword,
+          password: newPassword.trim(),
           passwordprecisaupdate: false,
         };
         axios
@@ -69,10 +61,10 @@ const AlterarPassword = () => {
           .then((response) => {
             if (response.data.success) {
               setRedMessage("");
-              setGreenMessage("Password alterada com sucesso. Já pode utilizar a aplicação.");
+              setGreenMessage("Password alterada com sucesso. ");
             } else {
               setGreenMessage("");
-              setRedMessage("Erro ao alterar a password. Tente novamente");
+              setRedMessage("Erro a alterar a password. Tente novamente");
             }
           })
           .catch((error) => {
@@ -80,7 +72,7 @@ const AlterarPassword = () => {
           });
       } else {
         setGreenMessage("");
-        setRedMessage("As passwords devem coincidir. Volte a digitir ambas");
+        setRedMessage("As passwords não são iguais!");
       }
     }
   }
@@ -88,70 +80,109 @@ const AlterarPassword = () => {
   useEffect(() => {
     getCurrentUser();
     isUserLogged();
-
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/user/passwordNeedsUpdate/" + storageUser.token;
-    axios
-      .post(baseUrl, { headers: authHeader() })
-      .then((response) => {
-        if (response.data.success) {
-          setTitle("Bem vindo ao Softinsa-Reunions");
-          setDescription("Para poder continuar e ter acesso às restantes funcionalidades vamos pedir-lhe que altere a sua password.");
-        } else {
-          setTitle("Alterar password");
-          setDescription("Defina uma password segura.");
-        }
-      })
-      .catch((error) => {});
   }, []);
 
   return (
-    <div className="home">
-      <Sidebar />
-      <div className="homeContainer">
-        <Navbar title={title} user={currentUser} />
-        <div className="pageContent">
-          <div style={{ color: "red" }} className="textInformation">
-            <h6> {description}</h6>
-          </div>
-          <Form id="input-form" style={{ paddingTop: "1%" }} noValidate validated={validated} onSubmit={checkSubmitValues}>
-            <Form.Group className="mb-3" controlId="password">
-              <Form.Label>Password</Form.Label>
-              <Form.Control required type="password" placeholder="Introduza password" onChange={(value) => setNewPassword(value.target.value)} />
-              <Form.Control.Feedback type="invalid">Insira uma password.</Form.Control.Feedback>
-            </Form.Group>
+    <>
+      <Navbar />
+      <h2 className="text-center mt-5">Alterar Password</h2>
+      <Form
+        className="d-flex flex-column mt-3"
+        style={{
+          width: "fit-content",
+          marginInline: "auto",
+          minWidth: "500px",
+        }}
+        id="input-form"
+        noValidate
+        validated={validated}
+        onSubmit={checkSubmitValues}
+      >
+        <Form.Group className="mb-3" controlId="password">
+          <Form.Control
+            required
+            type="password"
+            placeholder="Password"
+            onChange={(value) => setNewPassword(value.target.value)}
+          />
+          <Form.Control.Feedback type="invalid">
+            Campo Obrigatório.
+          </Form.Control.Feedback>
+        </Form.Group>
 
-            <Form.Group className="mb-3" controlId="confirmarPassword">
-              <Form.Label>Confirmar Password</Form.Label>
-              <Form.Control required type="password" placeholder="Introduza novamente a  password" onChange={(value) => setConfirmNewPassword(value.target.value)} />
-              <Form.Control.Feedback type="invalid">Confirme a sua password.</Form.Control.Feedback>
-            </Form.Group>
+        <Form.Group className="mb-3" controlId="confirmarPassword">
+          <Form.Control
+            required
+            type="password"
+            placeholder="Repetir Password"
+            onChange={(value) => setConfirmNewPassword(value.target.value)}
+          />
+          <Form.Control.Feedback type="invalid">
+            Campo Obrigatório.
+          </Form.Control.Feedback>
+        </Form.Group>
 
-            <Button onClick={() => updatePassword()} type="submit" sx={{ marginRight: 1 }} variant="outlined" color="success">
-              Confirmar Alterações
-            </Button>
-
-            {greenmessage && (
-              <div className="form-group">
-                <div style={{ width: "40%", textAlign: "center", paddingTop: "1%" }} className="alerts-wrapper">
-                  <div style={{ fontSize: "18px" }} className="alert alert-success" role="alert">
-                    {greenmessage}
-                  </div>
-                </div>
-              </div>
-            )}
-            {redmessage && (
-              <div className="form-group">
-                <div style={{ width: "40%", textAlign: "center", paddingTop: "1%" }} className="alerts-wrapper">
-                  <div style={{ fontSize: "18px" }} className="alert alert-danger" role="alert">
-                    {redmessage}
-                  </div>
-                </div>
-              </div>
-            )}
-          </Form>
+        <div className="d-flex gap-2 mx-auto">
+          <button
+            className="btn btn-danger h-50"
+            style={{ width: "fit-content" }}
+            onClick={() => navigate(-1)}
+            type="submit"
+          >
+            Voltar
+          </button>
+          <button
+            className="btn btn-success h-50"
+            style={{ width: "fit-content" }}
+            onClick={() => updatePassword()}
+            type="submit"
+          >
+            Confirmar
+          </button>
         </div>
-      </div>
-    </div>
+
+        {greenmessage && (
+          <div className="form-group">
+            <div
+              style={{
+                width: "40%",
+                textAlign: "center",
+                paddingTop: "1%",
+              }}
+              className="alerts-wrapper"
+            >
+              <div
+                style={{ fontSize: "18px" }}
+                className="alert alert-success"
+                role="alert"
+              >
+                {greenmessage}
+              </div>
+            </div>
+          </div>
+        )}
+        {redmessage && (
+          <div className="form-group">
+            <div
+              style={{
+                width: "40%",
+                textAlign: "center",
+                paddingTop: "1%",
+              }}
+              className="alerts-wrapper"
+            >
+              <div
+                style={{ fontSize: "18px" }}
+                className="alert alert-danger"
+                role="alert"
+              >
+                {redmessage}
+              </div>
+            </div>
+          </div>
+        )}
+      </Form>
+    </>
   );
 };
 

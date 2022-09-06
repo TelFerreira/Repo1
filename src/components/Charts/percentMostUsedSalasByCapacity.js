@@ -47,7 +47,7 @@ const PercentMostUsedSalasByCapacity = (entrada) => {
   useEffect(() => {
     if (entrada.capacidade.length != 0) {
       axios
-        .get("https://softinsa-reunions-back.herokuapp.com/reservas/percentMostUsedSalasByCapacity/" + entrada.capacidade, {
+        .get("https://backend-pint2022.herokuapp.com/reservas/percentMostUsedSalasByCapacity/" + entrada.capacidade, {
           headers: authHeader(),
         })
         .then((res) => {

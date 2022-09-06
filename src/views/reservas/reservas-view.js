@@ -20,8 +20,12 @@ const Reservas = () => {
 
   const [error, setError] = useState("");
 
-  const [inicioData, setInicioData] = useState(new Date().toISOString().slice(0, 10));
-  const [fimData, setFimData] = useState(dayPlusSeven(new Date()).toISOString().slice(0, 10));
+  const [inicioData, setInicioData] = useState(
+    new Date().toISOString().slice(0, 10)
+  );
+  const [fimData, setFimData] = useState(
+    dayPlusSeven(new Date()).toISOString().slice(0, 10)
+  );
 
   const [listaCentros, setListaCentros] = useState([]);
   const [centroEscolhido, setCentroEscolhido] = useState("");
@@ -41,7 +45,9 @@ const Reservas = () => {
 
   async function getCurrentUser() {
     if (storageUser) {
-      await AuthService.getCurrentUser(storageUser.token).then((response) => setcurrentUser(response));
+      await AuthService.getCurrentUser(storageUser.token).then((response) =>
+        setcurrentUser(response)
+      );
     }
   }
 
@@ -54,7 +60,9 @@ const Reservas = () => {
   useEffect(() => {
     function getCentrosData() {
       axios
-        .get("https://softinsa-reunions-back.herokuapp.com/centros/list", { headers: authHeader() })
+        .get("https://backend-pint2022.herokuapp.com/centros/list", {
+          headers: authHeader(),
+        })
         .then((res) => {
           if (res.data.success) {
             setListaCentros(res.data.data);
@@ -67,7 +75,9 @@ const Reservas = () => {
         });
     }
 
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/user/passwordNeedsUpdate/" + storageUser.token;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/user/passwordNeedsUpdate/" +
+      storageUser.token;
     axios
       .post(baseUrl, { headers: authHeader() })
       .then((response) => {
@@ -84,46 +94,89 @@ const Reservas = () => {
 
   return (
     <>
-      <div className="home">
-        <Sidebar />
-        <div className="homeContainer">
-          <Navbar title="Reservas" user={currentUser} />
-          <div className="pageContent">
-            <div className="featuredInfoContainer" style={{ justifyContent: "space-evenly", alignItems: "baseline" }}>
-              <div>
-                Inicio:
-                <input type="date" className="camposInput" id="qtyReservaStart" max={fimData} onChange={(value) => setInicioData(value.target.value)} value={inicioData} />
-              </div>
-              <div>
-                Fim:
-                <input type="date" className="camposInput" id="qtyReservaEnd" min={inicioData} onChange={(value) => setFimData(value.target.value)} value={fimData} />
-              </div>
-              <Form.Group className="mb-3" style={{ display: "flex", alignItems: "center" }}>
-                <label className="camposInput">Centro:</label>
-                <Form.Select id="escolhaCentro" required defaultValue={0} onChange={(value) => setCentroEscolhido(value.target.value)}>
-                  <option value={0}>Nenhum</option>
-                  {listaCentros?.map((centro, index) =>
-                    centro.activeStatus ? (
-                      <option key={centro.id_centro} value={centro.id_centro}>
-                        {centro.nomecentro}
-                      </option>
-                    ) : (
-                      <option className="inativo" key={centro.id_centro} value={centro.id_centro}>
-                        {centro.nomecentro}
-                      </option>
-                    )
-                  )}
-                </Form.Select>
-              </Form.Group>
-              <Button variant="outlined" color="error" onClick={() => resetData()}>
-                Eliminar Filtros
-              </Button>
-            </div>
-            <div className="nota">
-              <Tabela dataIncial={inicioData} dataFinal={fimData} idCentro={centroEscolhido} />
-            </div>
-          </div>
-        </div>
+      <Navbar title="Reservas" user={currentUser} />
+      <div
+        className="d-flex gap-2 my-2 mx-auto"
+        style={{ width: "fit-content" }}
+      >
+        <Form.Group
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <label className="camposInput">Inicio:</label>
+          <input
+            type="date"
+            className="form-control"
+            id="qtyReservaStart"
+            max={fimData}
+            onChange={(value) => setInicioData(value.target.value)}
+            value={inicioData}
+          />
+        </Form.Group>
+        <Form.Group
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <label className="camposInput">Fim:</label>
+          <input
+            type="date"
+            className="form-control"
+            id="qtyReservaEnd"
+            min={inicioData}
+            onChange={(value) => setFimData(value.target.value)}
+            value={fimData}
+          />
+        </Form.Group>
+        <Form.Group
+          style={{
+            display: "flex",
+            alignItems: "center",
+            minWidth: "200px",
+          }}
+        >
+          <label className="camposInput">Centro:</label>
+          <Form.Select
+            id="escolhaCentro"
+            required
+            defaultValue={0}
+            onChange={(value) => setCentroEscolhido(value.target.value)}
+          >
+            <option value={0}>Nenhum</option>
+            {listaCentros?.map((centro, index) =>
+              centro.activeStatus ? (
+                <option key={centro.id_centro} value={centro.id_centro}>
+                  {centro.nomecentro}
+                </option>
+              ) : (
+                <option
+                  className="inativo"
+                  key={centro.id_centro}
+                  value={centro.id_centro}
+                >
+                  {centro.nomecentro}
+                </option>
+              )
+            )}
+          </Form.Select>
+        </Form.Group>
+        <button
+          type="button"
+          className="btn btn-danger h-50"
+          onClick={() => resetData()}
+        >
+          Eliminar Filtros
+        </button>
+      </div>
+      <div className="nota">
+        <Tabela
+          dataIncial={inicioData}
+          dataFinal={fimData}
+          idCentro={centroEscolhido}
+        />
       </div>
     </>
   );

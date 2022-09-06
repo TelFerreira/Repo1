@@ -1,19 +1,16 @@
-import React, { useEffect, useState } from "react";
-import AuthService from "../../../services/auth.service";
-import axios from "axios";
-import Sidebar from "../../../components/Sidebar";
-import Navbar from "../../../components/Navbar";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import "./editarcentro-view.css";
-import { Form } from "react-bootstrap";
-import { useParams } from "react-router-dom";
 import Button from "@mui/material/Button";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Form } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import Navbar from "../../../components/Navbar";
 import authHeader from "../../../services/auth-header";
+import AuthService from "../../../services/auth.service";
+import "./editarcentro-view.css";
 
 const EditarCentro = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const [currentUser, setcurrentUser] = useState("");
   const { user: storageUser } = useSelector((state) => state.auth);
@@ -28,7 +25,10 @@ const EditarCentro = () => {
   const [error, setError] = useState();
 
   function getCurrentUser() {
-    if (storageUser) AuthService.getCurrentUser(storageUser.token).then((response) => setcurrentUser(response));
+    if (storageUser)
+      AuthService.getCurrentUser(storageUser.token).then((response) =>
+        setcurrentUser(response)
+      );
   }
 
   function isUserLogged() {
@@ -38,7 +38,8 @@ const EditarCentro = () => {
   }
 
   async function updateCentroStatus(activeStatus) {
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/centros/updateStatus/" + centroID;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/centros/updateStatus/" + centroID;
     const datapost = {
       activeStatus: activeStatus,
     };
@@ -59,7 +60,8 @@ const EditarCentro = () => {
   }
 
   function updateCentroData() {
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/centros/update/" + centroID;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/centros/update/" + centroID;
     const datapost = {
       nomecentro: centroName,
       id_local: centroLocalizacao,
@@ -82,7 +84,9 @@ const EditarCentro = () => {
 
   useEffect(() => {
     axios
-      .get("https://softinsa-reunions-back.herokuapp.com/localizacoes/list", { headers: authHeader() })
+      .get("https://backend-pint2022.herokuapp.com/localizacoes/list", {
+        headers: authHeader(),
+      })
       .then((res) => {
         if (res.data.success) {
           setlistaLocalizacao(res.data.data);
@@ -95,7 +99,9 @@ const EditarCentro = () => {
       });
 
     axios
-      .get("https://softinsa-reunions-back.herokuapp.com/centros/get/" + centroID, { headers: authHeader() })
+      .get("https://backend-pint2022.herokuapp.com/centros/get/" + centroID, {
+        headers: authHeader(),
+      })
       .then((res) => {
         if (res.data.success) {
           console.log(res.data);
@@ -110,7 +116,9 @@ const EditarCentro = () => {
         setError(error.data.data);
       });
 
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/user/passwordNeedsUpdate/" + storageUser.token;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/user/passwordNeedsUpdate/" +
+      storageUser.token;
     axios
       .post(baseUrl, { headers: authHeader() })
       .then((response) => {
@@ -125,47 +133,74 @@ const EditarCentro = () => {
   }, []);
 
   return (
-    <div className="home">
-      <Sidebar />
-      <div className="homeContainer">
-        <Navbar title="Editar Centro" user={currentUser} />
-        <div className="pageContent">
-          <Form noValidate validated={validated}>
-            <Form.Group className="mb-3" controlId="nomeCentro">
-              <Form.Label>Nome Centro</Form.Label>
-              <Form.Control required type="text" placeholder="Introduza nome" value={centroName} onChange={(value) => setcentroName(value.target.value)} />
-              <Form.Control.Feedback type="invalid">Insira um nome.</Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Localização</Form.Label>
-              <Form.Select required value={centroLocalizacao} onChange={(value) => setcentroLocalizacao(value.target.value)}>
-                <option value={0}>Escolha uma Localização</option>
-                {listaLocalizacao?.map((localizacao, index) => (
-                  <option key={index} value={localizacao.id_local}>
-                    {localizacao.freguesia}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-            {activeStatus ? (
-              <Button onClick={() => updateCentroStatus(false)} sx={{ marginRight: 1 }} variant="outlined" color="secondary">
-                Inativar
-              </Button>
-            ) : (
-              <Button onClick={() => updateCentroStatus(true)} sx={{ marginRight: 1 }} variant="outlined" color="secondary">
-                Ativar
-              </Button>
-            )}
-            <Button onClick={() => updateCentroData()} type="submit" sx={{ marginRight: 1 }} variant="outlined" color="success">
-              Confirmar Alterações
-            </Button>
-            <Button href={"/centros"} sx={{ marginRight: 1 }} variant="outlined" color="error">
-              Cancelar
-            </Button>
-          </Form>
+    <>
+      <Navbar title="Editar Centro" user={currentUser} />
+      <h2 className="text-center mt-5">Alterar Centro</h2>
+      <Form
+        className="d-flex flex-column mx-auto"
+        style={{ width: "fit-content", minWidth: "500px" }}
+        noValidate
+        validated={validated}
+      >
+        <Form.Group className="mb-3" controlId="nomeCentro">
+          <Form.Label>Nome</Form.Label>
+          <Form.Control
+            required
+            type="text"
+            placeholder="Nome"
+            value={centroName}
+            onChange={(value) => setcentroName(value.target.value)}
+          />
+          <Form.Control.Feedback type="invalid">
+            Campo Obrigatório.
+          </Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Localização</Form.Label>
+          <Form.Select
+            required
+            value={centroLocalizacao}
+            onChange={(value) => setcentroLocalizacao(value.target.value)}
+          >
+            <option value={0}>Escolha uma Localização</option>
+            {listaLocalizacao?.map((localizacao, index) => (
+              <option key={index} value={localizacao.id_local}>
+                {localizacao.freguesia}
+              </option>
+            ))}
+          </Form.Select>
+        </Form.Group>
+        <div className="d-flex gap-2">
+          {activeStatus ? (
+            <button
+              className="btn btn-warning h-50"
+              style={{ width: "fit-content" }}
+              onClick={() => updateCentroStatus(false)}
+            >
+              Inativar
+            </button>
+          ) : (
+            <button
+              className="btn btn-success h-50"
+              style={{ width: "fit-content" }}
+              onClick={() => updateCentroStatus(true)}
+            >
+              Ativar
+            </button>
+          )}
+          <a className="btn btn-danger h-50" href={"/centros"}>
+            Cancelar
+          </a>
+          <button
+            className="btn btn-success h-50"
+            onClick={() => updateCentroData()}
+            type="submit"
+          >
+            Confirmar Alterações
+          </button>
         </div>
-      </div>
-    </div>
+      </Form>
+    </>
   );
 };
 

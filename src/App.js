@@ -16,6 +16,7 @@ import Reservas from "./views/reservas/reservas-view";
 import { history } from "./helpers/history";
 import { logout } from "./actions/auth";
 import { clearMessage } from "./actions/message";
+import Landing from "./views/microsite/microsite";
 
 function App() {
   const dispatch = useDispatch();
@@ -33,11 +34,20 @@ function App() {
   return (
     <div>
       <Routes history={history}>
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route exact path="/dashboard" element={<Dashboard />} />
         <Route exact path="/utilizadores" element={<Utilizadores />} />
-        <Route exact path="/editarUtilizador/:id" element={<EditarUtilizador />} />
-        <Route exact path="/alterarPassword/:id" element={<AlterarPassword />} />
+        <Route
+          exact
+          path="/editarUtilizador/:id"
+          element={<EditarUtilizador />}
+        />
+        <Route
+          exact
+          path="/alterarPassword/:id"
+          element={<AlterarPassword />}
+        />
         <Route exact path="/centros" element={<Centros />} />
         <Route exact path="/editarCentro/:id" element={<EditarCentro />} />
         <Route exact path="/salas" element={<Salas />} />

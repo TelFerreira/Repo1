@@ -1,9 +1,20 @@
 import axios from "axios";
 import authHeader from "./auth-header";
 
-const register = (primeironome, sobrenome, email, password, passwordprecisaupdate, emailconfirmado, activeStatus, id_centro, id_tipoUtilizador, id_permissao) => {
+const register = (
+  primeironome,
+  sobrenome,
+  email,
+  password,
+  passwordprecisaupdate,
+  emailconfirmado,
+  activeStatus,
+  id_centro,
+  id_tipoUtilizador,
+  id_permissao
+) => {
   return axios.post(
-    "https://softinsa-reunions-back.herokuapp.com/user/register",
+    "https://backend-pint2022.herokuapp.com/user/register",
     {
       primeironome,
       sobrenome,
@@ -21,20 +32,30 @@ const register = (primeironome, sobrenome, email, password, passwordprecisaupdat
 };
 
 const getCurrentUser = (userToken) => {
-  return axios.get("https://softinsa-reunions-back.herokuapp.com/user/getByToken/" + userToken, { headers: authHeader() }).then((response) => {
-    if (response.data) {
-      return response.data;
-    }
-  });
+  return axios
+    .get(
+      "https://backend-pint2022.herokuapp.com/user/getByToken/" + userToken,
+      { headers: authHeader() }
+    )
+    .then((response) => {
+      if (response.data) {
+        return response.data;
+      }
+    });
 };
 
 const login = (email, password) => {
-  return axios.post("https://softinsa-reunions-back.herokuapp.com/user/login", { email, password }).then((response) => {
-    if (response.data.token) {
-      localStorage.setItem("user", JSON.stringify(response.data));
-    }
-    return response.data;
-  });
+  return axios
+    .post("https://backend-pint2022.herokuapp.com/user/login", {
+      email,
+      password,
+    })
+    .then((response) => {
+      if (response.data.token) {
+        localStorage.setItem("user", JSON.stringify(response.data));
+      }
+      return response.data;
+    });
 };
 
 const logout = () => {

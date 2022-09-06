@@ -35,7 +35,10 @@ const EditarUtilizador = () => {
   const [error, setError] = useState();
 
   function getCurrentUser() {
-    if (storageUser) AuthService.getCurrentUser(storageUser.token).then((response) => setcurrentUser(response));
+    if (storageUser)
+      AuthService.getCurrentUser(storageUser.token).then((response) =>
+        setcurrentUser(response)
+      );
   }
 
   function isUserLogged() {
@@ -45,7 +48,9 @@ const EditarUtilizador = () => {
   }
 
   function updateUtilizadorStatus(activeStatus) {
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/user/updateStatus/" + utilizadorID;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/user/updateStatus/" +
+      utilizadorID;
     const datapost = {
       activeStatus: activeStatus,
     };
@@ -64,8 +69,15 @@ const EditarUtilizador = () => {
   }
 
   function updateUtilizadorData() {
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/user/update/" + utilizadorID;
-    if (primeiroNome !== "" && sobrenome !== "" && idCentro !== "" && idTipoUtilizador !== "" && idpermissao !== "") {
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/user/update/" + utilizadorID;
+    if (
+      primeiroNome !== "" &&
+      sobrenome !== "" &&
+      idCentro !== "" &&
+      idTipoUtilizador !== "" &&
+      idpermissao !== ""
+    ) {
       const datapost = {
         primeironome: primeiroNome,
         sobrenome: sobrenome,
@@ -100,7 +112,10 @@ const EditarUtilizador = () => {
 
   useEffect(() => {
     axios
-      .get("https://softinsa-reunions-back.herokuapp.com/user/getByID/" + utilizadorID, { headers: authHeader() })
+      .get(
+        "https://backend-pint2022.herokuapp.com/user/getByID/" + utilizadorID,
+        { headers: authHeader() }
+      )
       .then((res) => {
         if (res.data.success) {
           setPrimeiroNome(res.data.data.primeironome);
@@ -119,7 +134,9 @@ const EditarUtilizador = () => {
       });
 
     axios
-      .get("https://softinsa-reunions-back.herokuapp.com/centros/listActiveCenters", { headers: authHeader() })
+      .get("https://backend-pint2022.herokuapp.com/centros/listActiveCenters", {
+        headers: authHeader(),
+      })
       .then((res) => {
         if (res.data.success) {
           setListaCentro(res.data.data);
@@ -132,7 +149,9 @@ const EditarUtilizador = () => {
       });
 
     axios
-      .get("https://softinsa-reunions-back.herokuapp.com/permissoes/list", { headers: authHeader() })
+      .get("https://backend-pint2022.herokuapp.com/permissoes/list", {
+        headers: authHeader(),
+      })
       .then((res) => {
         if (res.data.success) {
           setListaPermissoes(res.data.data);
@@ -145,7 +164,9 @@ const EditarUtilizador = () => {
       });
 
     axios
-      .get("https://softinsa-reunions-back.herokuapp.com/tipoUtilizador/list", { headers: authHeader() })
+      .get("https://backend-pint2022.herokuapp.com/tipoUtilizador/list", {
+        headers: authHeader(),
+      })
       .then((res) => {
         if (res.data.success) {
           setListatipoUtilizador(res.data.data);
@@ -157,7 +178,9 @@ const EditarUtilizador = () => {
         setError(error.toString());
       });
 
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/user/passwordNeedsUpdate/" + storageUser.token;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/user/passwordNeedsUpdate/" +
+      storageUser.token;
     axios
       .post(baseUrl, { headers: authHeader() })
       .then((response) => {
@@ -172,85 +195,132 @@ const EditarUtilizador = () => {
   }, []);
 
   return (
-    <div className="home">
-      <Sidebar />
-      <div className="homeContainer">
-        <Navbar title="Editar Utilizador" user={currentUser} />
-        <div className="pageContent">
-          <Form noValidate validated={validated} onSubmit={checkSubmitValues}>
-            <Form.Group className="mb-3" controlId="primeiroNome">
-              <Form.Label>Primeiro nome</Form.Label>
-              <Form.Control required type="text" placeholder="Introduza o seu primeiro nome" value={primeiroNome} onChange={(value) => setPrimeiroNome(value.target.value)} />
-              <Form.Control.Feedback type="invalid">Insira o seu primeiro nome.</Form.Control.Feedback>
-            </Form.Group>
+    <>
+      <Navbar />
+      <h2 className="text-center mt-5">Alterar Utilizador</h2>
 
-            <Form.Group className="mb-3" controlId="sobrenome">
-              <Form.Label>Sobrenome</Form.Label>
-              <Form.Control required type="text" placeholder="Introduza o seu sobrenome" value={sobrenome} onChange={(value) => setSobrenome(value.target.value)} />
-              <Form.Control.Feedback type="invalid">Insira o seu sobrenome.</Form.Control.Feedback>
-            </Form.Group>
+      <Form
+        className="d-flex flex-column mt-3"
+        style={{
+          width: "fit-content",
+          marginInline: "auto",
+          minWidth: "500px",
+        }}
+        noValidate
+        validated={validated}
+        onSubmit={checkSubmitValues}
+      >
+        <Form.Group className="mb-3" controlId="primeiroNome">
+          <Form.Control
+            required
+            type="text"
+            placeholder="Primeiro Nome"
+            value={primeiroNome}
+            onChange={(value) => setPrimeiroNome(value.target.value)}
+          />
+          <Form.Control.Feedback type="invalid">
+            Campo Obrigatório.
+          </Form.Control.Feedback>
+        </Form.Group>
 
-            <Form.Group className="mb-3" controlId="email">
-              <Form.Label>Email (não pode alterar)</Form.Label>
-              <Form.Control disabled type="text" placeholder="Introduza o seu email" value={email} onChange={(value) => setEmail(value.target.value)} />
-              <Form.Control.Feedback type="invalid">Insira o seu email.</Form.Control.Feedback>
-            </Form.Group>
+        <Form.Group className="mb-3" controlId="sobrenome">
+          <Form.Control
+            required
+            type="text"
+            placeholder="Sobrenome"
+            value={sobrenome}
+            onChange={(value) => setSobrenome(value.target.value)}
+          />
+          <Form.Control.Feedback type="invalid">
+            Campo Obrigatório.
+          </Form.Control.Feedback>
+        </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Centro</Form.Label>
-              <Form.Select required value={idCentro} onChange={(value) => setIdCentro(value.target.value)}>
-                <option value={0}>Escolha um Centro</option>
-                {listacentro?.map((centro, index) => (
-                  <option key={index} value={centro.id_centro}>
-                    {centro.nomecentro}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
+        <Form.Group className="mb-3" controlId="email">
+          <Form.Control
+            disabled
+            type="text"
+            placeholder="Email"
+            value={email}
+            onChange={(value) => setEmail(value.target.value)}
+          />
+          <Form.Control.Feedback type="invalid">
+            Campo Obrigatório.
+          </Form.Control.Feedback>
+        </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Tipo Utilizador</Form.Label>
-              <Form.Select required value={idTipoUtilizador} onChange={(value) => setIdTipoUtilizador(value.target.value)}>
-                <option value={0}>Escolha um tipo de utilizador</option>
-                {listatipoUtilizador?.map((tipoUtilizador, index) => (
-                  <option key={index} value={tipoUtilizador.id_tipoUtilizador}>
-                    {tipoUtilizador.descricao}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Select
+            required
+            value={idCentro}
+            onChange={(value) => setIdCentro(value.target.value)}
+          >
+            <option value={0}>Centro</option>
+            {listacentro?.map((centro, index) => (
+              <option key={index} value={centro.id_centro}>
+                {centro.nomecentro}
+              </option>
+            ))}
+          </Form.Select>
+        </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Permissões Utilizador</Form.Label>
-              <Form.Select required value={idpermissao} onChange={(value) => setIdpermissao(value.target.value)}>
-                <option value={0}>Escolha um tipo de permissão</option>
-                {listapermissao?.map((permissao, index) => (
-                  <option key={index} value={permissao.id_permissao}>
-                    {permissao.descricao}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Select
+            required
+            value={idTipoUtilizador}
+            onChange={(value) => setIdTipoUtilizador(value.target.value)}
+          >
+            <option value={0}>Tipo</option>
+            {listatipoUtilizador?.map((tipoUtilizador, index) => (
+              <option key={index} value={tipoUtilizador.id_tipoUtilizador}>
+                {tipoUtilizador.descricao}
+              </option>
+            ))}
+          </Form.Select>
+        </Form.Group>
 
-            {activeStatus ? (
-              <Button onClick={() => updateUtilizadorStatus(false)} sx={{ marginRight: 1 }} variant="outlined" color="secondary">
-                Inativar
-              </Button>
-            ) : (
-              <Button onClick={() => updateUtilizadorStatus(true)} sx={{ marginRight: 1 }} variant="outlined" color="secondary">
-                Ativar
-              </Button>
-            )}
-            <Button type="submit" sx={{ marginRight: 1 }} variant="outlined" color="success">
-              Confirmar Alterações
-            </Button>
-            <Button href={"/utilizadores"} sx={{ marginRight: 1 }} variant="outlined" color="error">
-              Cancelar
-            </Button>
-          </Form>
+        <Form.Group className="mb-3">
+          <Form.Select
+            required
+            value={idpermissao}
+            onChange={(value) => setIdpermissao(value.target.value)}
+          >
+            <option value={0}>Permisssão</option>
+            {listapermissao?.map((permissao, index) => (
+              <option key={index} value={permissao.id_permissao}>
+                {permissao.descricao}
+              </option>
+            ))}
+          </Form.Select>
+        </Form.Group>
+        <div className="d-flex gap-2">
+          {activeStatus ? (
+            <button
+              className="btn btn-warning h-50"
+              style={{ width: "fit-content" }}
+              onClick={() => updateUtilizadorStatus(false)}
+            >
+              Inativar
+            </button>
+          ) : (
+            <button
+              className="btn btn-success h-50"
+              style={{ width: "fit-content" }}
+              onClick={() => updateUtilizadorStatus(true)}
+            >
+              Ativar
+            </button>
+          )}
+
+          <a className="btn btn-danger h-50" href={"/utilizadores"}>
+            Cancelar
+          </a>
+          <button className="btn btn-success h-50" type="submit">
+            Confirmar
+          </button>
         </div>
-      </div>
-    </div>
+      </Form>
+    </>
   );
 };
 

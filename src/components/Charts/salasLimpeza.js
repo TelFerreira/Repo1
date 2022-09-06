@@ -26,9 +26,13 @@ const SalaLimpeza = (entrada) => {
   useEffect(() => {
     if (entrada.centroSelecionada.length != 0) {
       axios
-        .get("https://softinsa-reunions-back.herokuapp.com/reservas/getListByLimpeza/" + entrada.centroSelecionada, {
-          headers: authHeader(),
-        })
+        .get(
+          "https://backend-pint2022.herokuapp.com/reservas/getListByLimpeza/" +
+            entrada.centroSelecionada,
+          {
+            headers: authHeader(),
+          }
+        )
         .then((res) => {
           setTableInfo(res.data.data);
         })
@@ -41,25 +45,28 @@ const SalaLimpeza = (entrada) => {
       <Table>
         <thead>
           <tr>
-            <th>Id</th>
             <th>Nome da Sala</th>
-            <th>Hora do Fim da Limpeza</th>
-            <th>Descrição</th>
-            <th>Nrº Participantes</th>
+            <th>Fim da Limpeza</th>
+            <th>Participantes</th>
           </tr>
         </thead>
         <tbody>
           {tableInfo
             ?.filter((info) => {
               const tempo = new Date().toLocaleTimeString();
-              return info.horaFim < addTimeOnString(tempo.slice(0, 2), tempo.slice(3, 5), info.tempo_limpeza) && info.horaFim > tempo.slice(0, 5);
+              return (
+                info.horaFim <
+                  addTimeOnString(
+                    tempo.slice(0, 2),
+                    tempo.slice(3, 5),
+                    info.tempo_limpeza
+                  ) && info.horaFim > tempo.slice(0, 5)
+              );
             })
             .map((info, index) => (
               <tr>
-                <td>{info.id_reserva}</td>
                 <td>{info.nomesala}</td>
                 <td>{info.horaFim.slice(0, 5)}</td>
-                <td>Em limpeza...</td>
                 <td>{info.nr_participantes}</td>
               </tr>
             ))}

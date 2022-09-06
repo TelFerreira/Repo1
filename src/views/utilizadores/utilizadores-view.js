@@ -1,19 +1,16 @@
-import React, { useEffect, useState, useRef } from "react";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import Button from "@mui/material/Button";
 import axios from "axios";
+import React, { useEffect, useRef, useState } from "react";
+import { Card, Form, Modal } from "react-bootstrap";
+import Table from "react-bootstrap/Table";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { register } from "../../actions/auth";
-import authHeader from "../../services/auth-header";
-import CardActions from "@mui/material/CardActions";
-import AuthService from "../../services/auth.service";
-import Sidebar from "../../components/Sidebar";
-import Navbar from "../../components/Navbar";
-import Button from "@mui/material/Button";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import { Card, Form, Modal } from "react-bootstrap";
 import * as XLSX from "xlsx";
+import { register } from "../../actions/auth";
+import Navbar from "../../components/Navbar";
+import authHeader from "../../services/auth-header";
+import AuthService from "../../services/auth.service";
 import "./utilizadores-view.css";
 
 const Utilizadores = () => {
@@ -44,10 +41,6 @@ const Utilizadores = () => {
   const handleShow5 = () => setShow5(true);
   const handleClose5 = () => setShow5(false);
 
-  const [show6, setShow6] = useState(false);
-  const handleShow6 = () => setShow6(true);
-  const handleClose6 = () => setShow6(false);
-
   const [userList, setuserList] = useState();
   const [error, setError] = useState("");
 
@@ -74,7 +67,20 @@ const Utilizadores = () => {
 
   function handleSubmit() {
     if (nome !== "" && sobrenome !== "" && email !== "" && password !== "") {
-      dispatch(register(nome, sobrenome, email, password, true, false, true, centro, tipoUtilizador, permissao))
+      dispatch(
+        register(
+          nome,
+          sobrenome,
+          email,
+          password,
+          true,
+          false,
+          true,
+          centro,
+          tipoUtilizador,
+          permissao
+        )
+      )
         .then(() => {
           handleClose1();
           handleShow3();
@@ -96,7 +102,8 @@ const Utilizadores = () => {
   };
 
   function handleDeleteUtilizador(idtoDelete) {
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/user/delete/" + idtoDelete;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/user/delete/" + idtoDelete;
     axios
       .delete(baseUrl, { headers: authHeader() })
       .then((response) => {
@@ -113,18 +120,41 @@ const Utilizadores = () => {
   }
 
   function checkValidRow(data) {
-    if (data.email && data.sobrenome && data.email && data.password && data.id_permissao && data.id_tipoUtilizador) return true;
+    if (
+      data.email &&
+      data.sobrenome &&
+      data.email &&
+      data.password &&
+      data.id_permissao &&
+      data.id_tipoUtilizador
+    )
+      return true;
     else return false;
   }
 
   function sendToAPI(data) {
-    dispatch(register(data.primeironome, data.sobrenome, data.email, data.password.toString(), true, false, true, data.id_centro, data.id_tipoUtilizador, data.id_permissao))
+    dispatch(
+      register(
+        data.primeironome,
+        data.sobrenome,
+        data.email,
+        data.password.toString(),
+        true,
+        false,
+        true,
+        data.id_centro,
+        data.id_tipoUtilizador,
+        data.id_permissao
+      )
+    )
       .then(() => {
         setBulkSuccess("Bulk inserido com sucesso. Clique no botão continuar");
         setBulkError("");
       })
       .catch((error) => {
-        setBulkError("Erro ao inserir em bulk. Confirme o correto preenchimento do Excel");
+        setBulkError(
+          "Erro ao inserir em bulk. Confirme o correto preenchimento do Excel"
+        );
         setBulkSuccess("");
       });
   }
@@ -152,7 +182,10 @@ const Utilizadores = () => {
 
   useEffect(() => {
     function getCurrentUser() {
-      if (storageUser) AuthService.getCurrentUser(storageUser.token).then((response) => setcurrentUser(response));
+      if (storageUser)
+        AuthService.getCurrentUser(storageUser.token).then((response) =>
+          setcurrentUser(response)
+        );
     }
 
     function isUserLogged() {
@@ -163,7 +196,9 @@ const Utilizadores = () => {
 
     function getUserList() {
       axios
-        .get("https://softinsa-reunions-back.herokuapp.com/user/list", { headers: authHeader() })
+        .get("https://backend-pint2022.herokuapp.com/user/list", {
+          headers: authHeader(),
+        })
         .then((res) => {
           if (res.data.success) {
             setuserList(res.data.data);
@@ -178,7 +213,10 @@ const Utilizadores = () => {
 
     function getCentrosData() {
       axios
-        .get("https://softinsa-reunions-back.herokuapp.com/centros/listActiveCenters", { headers: authHeader() })
+        .get(
+          "https://backend-pint2022.herokuapp.com/centros/listActiveCenters",
+          { headers: authHeader() }
+        )
         .then((res) => {
           if (res.data.success) {
             setListaCentro(res.data.data);
@@ -193,7 +231,9 @@ const Utilizadores = () => {
 
     function getPermissoesData() {
       axios
-        .get("https://softinsa-reunions-back.herokuapp.com/permissoes/list", { headers: authHeader() })
+        .get("https://backend-pint2022.herokuapp.com/permissoes/list", {
+          headers: authHeader(),
+        })
         .then((res) => {
           if (res.data.success) {
             setListaPermissoes(res.data.data);
@@ -208,7 +248,9 @@ const Utilizadores = () => {
 
     function getTipoUtilizadoresData() {
       axios
-        .get("https://softinsa-reunions-back.herokuapp.com/tipoUtilizador/list", { headers: authHeader() })
+        .get("https://backend-pint2022.herokuapp.com/tipoUtilizador/list", {
+          headers: authHeader(),
+        })
         .then((res) => {
           if (res.data.success) {
             setListatipoUtilizador(res.data.data);
@@ -221,7 +263,9 @@ const Utilizadores = () => {
         });
     }
 
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/user/passwordNeedsUpdate/" + storageUser.token;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/user/passwordNeedsUpdate/" +
+      storageUser.token;
     axios
       .post(baseUrl, { headers: authHeader() })
       .then((response) => {
@@ -241,148 +285,229 @@ const Utilizadores = () => {
 
   return (
     <>
-      <div className="home">
-        <Sidebar />
-        <div className="homeContainer">
-          <Navbar title="Utilizadores" user={currentUser} />
-          <div className="pageContent">
-            <div className="menu-wrapper">
-              <Button onClick={handleShow1} sx={{ marginRight: 1 }} variant="contained" endIcon={<AddCircleOutlineIcon />}>
-                Criar Novo Utilizador
-              </Button>
-              <Button onClick={handleShow6} className="button-wrapper" variant="contained" endIcon={<AddCircleOutlineIcon />}>
-                Novo Utilizador Bulk
-              </Button>
-            </div>
-            <div className="content-wrapper">
-              <div className="card-wrapper row">
-                {userList?.map((user, index) => (
-                  <div className="card-item col-4" key={user.id_utilizador}>
-                    <Card className="card_utilizadores" sx={{ height: "fit-content" }}>
-                      <CardContent>
-                        <Typography sx={{ fontWeight: "bold", overflow: "hidden", whiteSpace: "nowrap" }} gutterBottom variant="h5" component="div">
-                          {user.primeironome + " " + user.sobrenome}
-                        </Typography>
-                        <Typography sx={{ padding: "1%", fontSize: "15px", fontWeight: "normal" }} variant="body2" variant="h10" color="text.secondary" component="div">
-                          {user.email}
-                        </Typography>
-                        <Typography sx={{ padding: "1%", fontSize: "15px", fontWeight: "normal" }} variant="body2" variant="h10" color="text.secondary" component="div">
-                          {user.id_tipoUtilizador == "1" ? "Administrador" : "Funcionário"}
-                        </Typography>
-                        <Typography sx={{ padding: "1%" }} variant="body2" color="text.secondary" component="div">
-                          {user.activeStatus ? (
-                            <div>
-                              <span className="dot-active" /> Ativo{" "}
-                            </div>
-                          ) : (
-                            <div>
-                              <span className="dot-inactive" /> Inativo{" "}
-                            </div>
-                          )}
-                        </Typography>
-                      </CardContent>
-                      <CardActions sx={{ display: "flex", justifyContent: "flex-end" }}>
-                        <Button sx={{ marginRight: "8px" }} href={"/editarUtilizador/" + user.id_utilizador} size="small" variant="outlined" color="success">
-                          Editar
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setUtilizadortoDelete(user);
-                            handleShow2();
-                          }}
-                          size="small"
-                          variant="outlined"
-                          color="error"
-                        >
-                          Eliminar
-                        </Button>
-                      </CardActions>
-                    </Card>
-                  </div>
-                ))}
+      <Navbar title="Utilizadores" user={currentUser} />
+      <div className="d-flex gap-2 w-25 my-2 mx-auto">
+        <button className="btn btn-primary h-100" onClick={handleShow1}>
+          Criar
+        </button>
+        <button
+          className="btn btn-primary h-100"
+          onClick={() => fileRef.current.click()}
+        >
+          Bulk Insert
+        </button>
+        <input
+          ref={fileRef}
+          onChange={onChange}
+          multiple={false}
+          type="file"
+          hidden
+          accept=".xlsx, .xls, .csv"
+        />
+        {bulkSuccess && (
+          <div className="form-group">
+            <div
+              style={{
+                width: "100%",
+                textAlign: "center",
+                paddingTop: "1%",
+              }}
+              className="alerts-wrapper"
+            >
+              <div
+                style={{ fontSize: "18px" }}
+                className="alert alert-success"
+                role="alert"
+              >
+                {bulkSuccess}
               </div>
             </div>
           </div>
-        </div>
+        )}
+        {bulkError && (
+          <div className="form-group">
+            <div
+              style={{
+                width: "100%",
+                textAlign: "center",
+                paddingTop: "1%",
+              }}
+              className="alerts-wrapper"
+            >
+              <div
+                style={{ fontSize: "18px" }}
+                className="alert alert-danger"
+                role="alert"
+              >
+                {bulkError}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+      <Table className="w-75 mx-auto" striped bordered hover>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Permissões</th>
+            <th>Estado</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {userList?.map((user, index) => (
+            <tr>
+              <td>{user.primeironome + " " + user.sobrenome}</td>
+              <td>{user.email}</td>
+              <td>
+                {user.id_tipoUtilizador === 1 ? "Administrador" : "Funcionário"}
+              </td>
+              <td>
+                {user.activeStatus ? (
+                  <div>
+                    <span className="dot-active" /> Ativo{" "}
+                  </div>
+                ) : (
+                  <div>
+                    <span className="dot-inactive" /> Inativo{" "}
+                  </div>
+                )}
+              </td>
+              <td>
+                <div className="d-flex gap-2">
+                  <a
+                    className="btn btn-primary h-100"
+                    sx={{ marginRight: "8px" }}
+                    href={"/editarUtilizador/" + user.id_utilizador}
+                  >
+                    Editar
+                  </a>
+                  <button
+                    className="btn btn-danger h-100"
+                    onClick={() => {
+                      setUtilizadortoDelete(user);
+                      handleShow2();
+                    }}
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
 
       <Modal show={show1} onHide={handleClose1} dialogClassName="modal-90w">
         <Form noValidate validated={validated} onSubmit={checkSubmitValues}>
           <Modal.Header closeButton>
-            <Modal.Title style={{ color: "gray", fontsize: "25px", fontWeight: "bold" }}>Criar Utilizador</Modal.Title>
+            <Modal.Title>Novo Utilizador</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Card className="card-modal" style={{ height: "fit-content" }}>
-              <Card.Body>
-                <Form.Group className="mb-3" controlId="nome">
-                  <Form.Label>Primeiro Nome</Form.Label>
-                  <Form.Control required type="text" placeholder="Introduza nome" onChange={(value) => setNome(value.target.value)} />
-                  <Form.Control.Feedback type="invalid">Insira um nome.</Form.Control.Feedback>
-                </Form.Group>
+            <Form.Group className="mb-3" controlId="nome">
+              <Form.Control
+                required
+                type="text"
+                placeholder="Nome"
+                onChange={(value) => setNome(value.target.value)}
+              />
+              <Form.Control.Feedback type="invalid">
+                Campo Obrigatório.
+              </Form.Control.Feedback>
+            </Form.Group>
 
-                <Form.Group className="mb-3" controlId="sobrenome">
-                  <Form.Label>Sobrenome</Form.Label>
-                  <Form.Control required type="text" placeholder="Introduza sobrenome" onChange={(value) => setSobrenome(value.target.value)} />
-                  <Form.Control.Feedback type="invalid">Insira um sobrenome.</Form.Control.Feedback>
-                </Form.Group>
+            <Form.Group className="mb-3" controlId="sobrenome">
+              <Form.Control
+                required
+                type="text"
+                placeholder="Sobrenome"
+                onChange={(value) => setSobrenome(value.target.value)}
+              />
+              <Form.Control.Feedback type="invalid">
+                Campo Obrigatório.
+              </Form.Control.Feedback>
+            </Form.Group>
 
-                <Form.Group className="mb-3" controlId="email">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control required type="text" placeholder="Introduza email" onChange={(value) => setEmail(value.target.value)} />
-                  <Form.Control.Feedback type="invalid">Insira um email.</Form.Control.Feedback>
-                </Form.Group>
+            <Form.Group className="mb-3" controlId="email">
+              <Form.Control
+                required
+                type="text"
+                placeholder="Email"
+                onChange={(value) => setEmail(value.target.value)}
+              />
+              <Form.Control.Feedback type="invalid">
+                Campo Obrigatório.
+              </Form.Control.Feedback>
+            </Form.Group>
 
-                <Form.Group className="mb-3" controlId="password">
-                  <Form.Label>Password</Form.Label>
-                  <Form.Control required type="password" placeholder="Introduza password" onChange={(value) => setPassword(value.target.value)} />
-                  <Form.Control.Feedback type="invalid">Insira uma password.</Form.Control.Feedback>
-                </Form.Group>
+            <Form.Group className="mb-3" controlId="password">
+              <Form.Control
+                required
+                type="password"
+                placeholder="Password"
+                onChange={(value) => setPassword(value.target.value)}
+              />
+              <Form.Control.Feedback type="invalid">
+                Campo Obrigatório.
+              </Form.Control.Feedback>
+            </Form.Group>
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Centro</Form.Label>
-                  <Form.Select required defaultValue={0} onChange={(value) => setCentro(value.target.value)}>
-                    <option value={0}>Escolha um Centro</option>
-                    {listacentro?.map((centro, index) => (
-                      <option key={index} value={centro.id_centro}>
-                        {centro.nomecentro}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Select
+                required
+                defaultValue={0}
+                onChange={(value) => setCentro(value.target.value)}
+              >
+                <option value={0}>Centro</option>
+                {listacentro?.map((centro, index) => (
+                  <option key={index} value={centro.id_centro}>
+                    {centro.nomecentro}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Tipo Utilizador</Form.Label>
-                  <Form.Select defaultValue={0} onChange={(value) => settipoUtilizador(value.target.value)}>
-                    <option value={0}>Escolha um tipo de utilizador</option>
-                    {listatipoUtilizador?.map((tipoUtilizador, index) => (
-                      <option key={index} value={tipoUtilizador.id_tipoUtilizador}>
-                        {tipoUtilizador.descricao}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Select
+                defaultValue={0}
+                onChange={(value) => settipoUtilizador(value.target.value)}
+              >
+                <option value={0}>Tipo</option>
+                {listatipoUtilizador?.map((tipoUtilizador, index) => (
+                  <option key={index} value={tipoUtilizador.id_tipoUtilizador}>
+                    {tipoUtilizador.descricao}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Permissões Utilizador</Form.Label>
-                  <Form.Select defaultValue={0} onChange={(value) => setPermissao(value.target.value)}>
-                    <option value={0}>Escolha um tipo de permissão</option>
-                    {listapermissao?.map((permissao, index) => (
-                      <option key={index} value={permissao.id_permissao}>
-                        {permissao.descricao}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </Card.Body>
-            </Card>
+            <Form.Group className="mb-3">
+              <Form.Select
+                defaultValue={0}
+                onChange={(value) => setPermissao(value.target.value)}
+              >
+                <option value={0}>Permissão</option>
+                {listapermissao?.map((permissao, index) => (
+                  <option key={index} value={permissao.id_permissao}>
+                    {permissao.descricao}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button onClick={checkSubmitValues} sx={{ marginRight: 1 }} variant="outlined" color="success">
-              Criar Utilizador
-            </Button>
-            <Button onClick={handleClose1} sx={{ marginRight: 1 }} variant="outlined" color="error">
-              Fechar
-            </Button>
+            <div className="d-flex gap-2">
+              <button
+                className="btn btn-success h-50"
+                onClick={checkSubmitValues}
+              >
+                Criar
+              </button>
+              <button className="btn btn-danger h-50" onClick={handleClose1}>
+                Voltar
+              </button>
+            </div>
           </Modal.Footer>
         </Form>
       </Modal>
@@ -390,20 +515,43 @@ const Utilizadores = () => {
       <Modal show={show2} onHide={handleClose2} dialogClassName="modal-90w">
         <Form>
           <Modal.Header closeButton>
-            <Modal.Title style={{ color: "gray", fontsize: "25px", fontWeight: "bold" }}>Eliminar Utilizador</Modal.Title>
+            <Modal.Title
+              style={{ color: "gray", fontsize: "25px", fontWeight: "bold" }}
+            >
+              Eliminar Utilizador
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Card className="card-modal" style={{ height: "fit-content" }}>
               <Card.Body>
-                <div style={{ fontSize: "20px" }}> Tem a certeza que quer eliminar o utilizador {utilizadortoDelete.primeironome + " " + utilizadortoDelete.sobrenome}?</div>
+                <div style={{ fontSize: "20px" }}>
+                  {" "}
+                  Tem a certeza que quer eliminar o utilizador{" "}
+                  {utilizadortoDelete.primeironome +
+                    " " +
+                    utilizadortoDelete.sobrenome}
+                  ?
+                </div>
               </Card.Body>
             </Card>
           </Modal.Body>
           <Modal.Footer>
-            <Button onClick={() => handleDeleteUtilizador(utilizadortoDelete.id_utilizador)} sx={{ marginRight: 1 }} variant="outlined" color="success">
+            <Button
+              onClick={() =>
+                handleDeleteUtilizador(utilizadortoDelete.id_utilizador)
+              }
+              sx={{ marginRight: 1 }}
+              variant="outlined"
+              color="success"
+            >
               Eliminar
             </Button>
-            <Button onClick={handleClose2} sx={{ marginRight: 1 }} variant="outlined" color="error">
+            <Button
+              onClick={handleClose2}
+              sx={{ marginRight: 1 }}
+              variant="outlined"
+              color="error"
+            >
               Fechar
             </Button>
           </Modal.Footer>
@@ -419,7 +567,9 @@ const Utilizadores = () => {
         dialogClassName="modal-90w"
       >
         <Modal.Body style={{ backgroundColor: "light-green", border: "0" }}>
-          <h5 style={{ display: "flex", justifyContent: "center" }}>Utilizador criado com sucesso.</h5>
+          <h5 style={{ display: "flex", justifyContent: "center" }}>
+            Utilizador criado com sucesso.
+          </h5>
         </Modal.Body>
       </Modal>
 
@@ -432,7 +582,9 @@ const Utilizadores = () => {
         dialogClassName="modal-90w"
       >
         <Modal.Body style={{ backgroundColor: "light-green", border: "0" }}>
-          <h5 style={{ display: "flex", justifyContent: "center" }}>Erro ao criar o utilizador .</h5>
+          <h5 style={{ display: "flex", justifyContent: "center" }}>
+            Erro ao criar o utilizador .
+          </h5>
         </Modal.Body>
       </Modal>
 
@@ -445,58 +597,10 @@ const Utilizadores = () => {
         dialogClassName="modal-90w"
       >
         <Modal.Body style={{ backgroundColor: "light-green", border: "0" }}>
-          <h5 style={{ display: "flex", justifyContent: "center" }}>Utilizador eliminado com sucesso.</h5>
+          <h5 style={{ display: "flex", justifyContent: "center" }}>
+            Utilizador eliminado com sucesso.
+          </h5>
         </Modal.Body>
-      </Modal>
-
-      <Modal
-        show={show6}
-        onHide={() => {
-          handleClose6();
-        }}
-        dialogClassName="modal-90w"
-      >
-        <Modal.Header closeButton>
-          <Modal.Title style={{ color: "gray", fontsize: "25px", fontWeight: "bold" }}>Criar em modo Bulk</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <div className="divBulk" onClick={() => fileRef.current.click()}>
-              <Button variant="outline-secondary">Carregar ficheiro</Button>
-              <input ref={fileRef} onChange={onChange} multiple={false} type="file" hidden accept=".xlsx, .xls, .csv" />
-            </div>
-            {bulkSuccess && (
-              <div className="form-group">
-                <div style={{ width: "100%", textAlign: "center", paddingTop: "1%" }} className="alerts-wrapper">
-                  <div style={{ fontSize: "18px" }} className="alert alert-success" role="alert">
-                    {bulkSuccess}
-                  </div>
-                </div>
-              </div>
-            )}
-            {bulkError && (
-              <div className="form-group">
-                <div style={{ width: "100%", textAlign: "center", paddingTop: "1%" }} className="alerts-wrapper">
-                  <div style={{ fontSize: "18px" }} className="alert alert-danger" role="alert">
-                    {bulkError}
-                  </div>
-                </div>
-              </div>
-            )}
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="outlined"
-            color="success"
-            onClick={() => {
-              handleClose6();
-              window.location.reload();
-            }}
-          >
-            Continuar{" "}
-          </Button>
-        </Modal.Footer>
       </Modal>
     </>
   );

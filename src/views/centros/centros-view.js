@@ -1,17 +1,11 @@
-import React, { useEffect, useState } from "react";
-import AuthService from "../../services/auth.service";
 import axios from "axios";
-import Sidebar from "../../components/Sidebar";
-import Navbar from "../../components/Navbar";
-import Button from "@mui/material/Button";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import React, { useEffect, useState } from "react";
+import { Card, Form, Modal, Table } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { Card, Form, Modal } from "react-bootstrap";
+import Navbar from "../../components/Navbar";
 import authHeader from "../../services/auth-header";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import CardActions from "@mui/material/CardActions";
+import AuthService from "../../services/auth.service";
 import "./centros-view.css";
 
 const Centros = () => {
@@ -46,7 +40,10 @@ const Centros = () => {
   const [localizacao, setLocalizacao] = useState("");
 
   function getCurrentUser() {
-    if (storageUser) AuthService.getCurrentUser(storageUser.token).then((response) => setcurrentUser(response));
+    if (storageUser)
+      AuthService.getCurrentUser(storageUser.token).then((response) =>
+        setcurrentUser(response)
+      );
   }
 
   function isUserLogged() {
@@ -57,7 +54,7 @@ const Centros = () => {
 
   function handleSubmit() {
     if (nomeCentro !== "" || localizacao !== "") {
-      const baseUrl = "https://softinsa-reunions-back.herokuapp.com/centros/register";
+      const baseUrl = "https://backend-pint2022.herokuapp.com/centros/register";
       const datapost = {
         nomecentro: nomeCentro,
         activeStatus: true,
@@ -89,7 +86,8 @@ const Centros = () => {
   };
 
   function handleDeleteCentro(idtoDelete) {
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/centros/delete/" + idtoDelete;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/centros/delete/" + idtoDelete;
     axios
       .delete(baseUrl, { headers: authHeader() })
       .then((response) => {
@@ -109,7 +107,9 @@ const Centros = () => {
   useEffect(() => {
     function getCentrosList() {
       axios
-        .get("https://softinsa-reunions-back.herokuapp.com/centros/list", { headers: authHeader() })
+        .get("https://backend-pint2022.herokuapp.com/centros/list", {
+          headers: authHeader(),
+        })
         .then((res) => {
           if (res.data.success) {
             setcentroList(res.data.data);
@@ -124,7 +124,9 @@ const Centros = () => {
 
     function getLocalizacoesData() {
       axios
-        .get("https://softinsa-reunions-back.herokuapp.com/localizacoes/list", { headers: authHeader() })
+        .get("https://backend-pint2022.herokuapp.com/localizacoes/list", {
+          headers: authHeader(),
+        })
         .then((res) => {
           if (res.data.success) {
             setlistaLocalizacao(res.data.data);
@@ -137,7 +139,9 @@ const Centros = () => {
         });
     }
 
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/user/passwordNeedsUpdate/" + storageUser.token;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/user/passwordNeedsUpdate/" +
+      storageUser.token;
     axios
       .post(baseUrl, { headers: authHeader() })
       .then((response) => {
@@ -154,123 +158,132 @@ const Centros = () => {
     getCurrentUser();
     isUserLogged();
   }, []);
-
   return (
     <>
-      <div className="home">
-        <Sidebar />
-        <div className="homeContainer">
-          <Navbar title="Centros" user={currentUser} />
-          <div className="pageContent">
-            <div className="menu-wrapper">
-              <Button onClick={handleShow1} sx={{ marginRight: 1 }} variant="contained" endIcon={<AddCircleOutlineIcon />}>
-                Criar Novo Centro
-              </Button>
-            </div>
-            <div className="content-wrapper">
-              <div className="card-wrapper row">
-                {centroList?.map((centro, index) => (
-                  <div className="card-item col-4" key={centro.id_centro}>
-                    <Card className="card_centros" sx={{ height: "fit-content" }}>
-                      <CardContent>
-                        <Typography sx={{ fontWeight: "bold" }} gutterBottom variant="h5" component="div">
-                          {"Centro de " + centro.nomecentro}
-                        </Typography>
-                        <Typography sx={{ padding: "1%" }} variant="body2" color="text.secondary" component="div">
-                          {centro.activeStatus ? (
-                            <div>
-                              <span className="dot-active" /> Ativo{" "}
-                            </div>
-                          ) : (
-                            <div>
-                              <span className="dot-inactive" /> Inativo{" "}
-                            </div>
-                          )}
-                        </Typography>
-                      </CardContent>
-                      <CardActions sx={{ display: "flex", justifyContent: "flex-end" }}>
-                        <Button sx={{ marginRight: "8px" }} href={"/editarCentro/" + centro.id_centro} size="small" variant="outlined" color="success">
-                          Editar
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setCentrotoDelete(centro);
-                            handleShow2();
-                          }}
-                          size="small"
-                          variant="outlined"
-                          color="error"
-                        >
-                          Eliminar
-                        </Button>
-                      </CardActions>
-                    </Card>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+      <Navbar title="Centros" user={currentUser} />
+      <div className="d-flex gap-2 w-25 my-2 mx-auto">
+        <button className="btn btn-primary h-100" onClick={handleShow1}>
+          Criar
+        </button>
       </div>
+      <Table className="w-50 mx-auto" striped bordered hover>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Estado</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {centroList?.map((centro, index) => (
+            <tr>
+              <td>{centro.nomecentro}</td>
+              <td>
+                {centro.activeStatus ? (
+                  <div>
+                    <span className="dot-active" /> Ativo{" "}
+                  </div>
+                ) : (
+                  <div>
+                    <span className="dot-inactive" /> Inativo{" "}
+                  </div>
+                )}
+              </td>
+              <td>
+                <div className="d-flex gap-2">
+                  <a
+                    className="btn btn-primary h-100"
+                    href={"/editarCentro/" + centro.id_centro}
+                  >
+                    Editar
+                  </a>
+                  <button
+                    className="btn btn-danger h-100"
+                    onClick={() => {
+                      setCentrotoDelete(centro);
+                      handleShow2();
+                    }}
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
 
       <Modal show={show1} onHide={handleClose1} dialogClassName="modal-90w">
         <Form noValidate validated={validated} onSubmit={checkSubmitValues}>
-          <Modal.Header closeButton>
-            <Modal.Title style={{ color: "gray", fontsize: "25px", fontWeight: "bold" }}>Criar Centro</Modal.Title>
+          <Modal.Header closebutton>
+            <Modal.Title>Novo Centro</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Card className="card-modal" style={{ height: "fit-content" }}>
-              <Card.Body>
-                <Form.Group className="mb-3" controlId="nomeCentro">
-                  <Form.Label>Nome Centro</Form.Label>
-                  <Form.Control required type="text" placeholder="Introduza nome" onChange={(value) => setNomeCentro(value.target.value)} />
-                  <Form.Control.Feedback type="invalid">Insira um nome.</Form.Control.Feedback>
-                </Form.Group>
+            <Form.Group className="mb-3" controlId="nomeCentro">
+              <Form.Control
+                required
+                type="text"
+                placeholder="Nome"
+                onChange={(value) => setNomeCentro(value.target.value)}
+              />
+              <Form.Control.Feedback type="invalid">
+                Campo Obrigatório.
+              </Form.Control.Feedback>
+            </Form.Group>
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Localização</Form.Label>
-                  <Form.Select required defaultValue={0} onChange={(value) => setLocalizacao(value.target.value)}>
-                    <option value={0}>Escolha uma Localização</option>
-                    {listaLocalizacao?.map((localizacao, index) => (
-                      <option key={index} value={localizacao.id_local}>
-                        {localizacao.freguesia}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </Card.Body>
-            </Card>
+            <Form.Group>
+              <Form.Select
+                required
+                defaultValue={0}
+                onChange={(value) => setLocalizacao(value.target.value)}
+              >
+                <option value={0} hidden>
+                  Localização
+                </option>
+                {listaLocalizacao?.map((localizacao, index) => (
+                  <option key={index} value={localizacao.id_local}>
+                    {localizacao.freguesia}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button type="submit" sx={{ marginRight: 1 }} variant="outlined" color="success">
-              Criar Centro
-            </Button>
-            <Button onClick={handleClose1} sx={{ marginRight: 1 }} variant="outlined" color="error">
-              Fechar
-            </Button>
+            <div className="d-flex gap-2">
+              <button className="btn btn-success h-100" type="submit">
+                Criar
+              </button>
+              <button className="btn btn-danger h-100" onClick={handleClose1}>
+                Voltar
+              </button>
+            </div>
           </Modal.Footer>
         </Form>
       </Modal>
 
       <Modal show={show2} onHide={handleClose2} dialogClassName="modal-90w">
         <Form>
-          <Modal.Header closeButton>
-            <Modal.Title style={{ color: "gray", fontsize: "25px", fontWeight: "bold" }}>Eliminar Centro</Modal.Title>
+          <Modal.Header closebutton>
+            <Modal.Title>Eliminar Centro</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Card className="card-modal" style={{ height: "fit-content" }}>
-              <Card.Body>
-                <div style={{ fontSize: "20px" }}> Tem a certeza que quer eliminar o centro de {centrotoDelete.nomecentro}?</div>
-              </Card.Body>
-            </Card>
+            <h5>
+              Tem a certeza que quer eliminar {centrotoDelete.nomecentro} da
+              lista de centros?
+            </h5>
           </Modal.Body>
           <Modal.Footer>
-            <Button onClick={() => handleDeleteCentro(centrotoDelete.id_centro)} sx={{ marginRight: 1 }} variant="outlined" color="success">
-              Eliminar
-            </Button>
-            <Button onClick={handleClose2} sx={{ marginRight: 1 }} variant="outlined" color="error">
-              Fechar
-            </Button>
+            <div className="d-flex gap-2">
+              <button
+                className="btn btn-warning h-100"
+                onClick={() => handleDeleteCentro(centrotoDelete.id_centro)}
+              >
+                Eliminar
+              </button>
+              <button className="btn btn-danger h-100" onClick={handleClose2}>
+                Fechar
+              </button>
+            </div>
           </Modal.Footer>
         </Form>
       </Modal>

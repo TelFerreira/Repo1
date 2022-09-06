@@ -19,7 +19,7 @@ const NumeroReservasByDate = (datas) => {
 
   useEffect(() => {
     axios
-      .get("https://softinsa-reunions-back.herokuapp.com/reservas/qtyReservasByDate", {
+      .get("https://backend-pint2022.herokuapp.com/reservas/qtyReservasByDate", {
         headers: authHeader(),
         params: {
           dataIncial: datas.dataIncial,

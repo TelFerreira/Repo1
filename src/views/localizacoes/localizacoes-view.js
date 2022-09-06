@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Card, Form, Modal, Alert } from "react-bootstrap";
+import { Card, Form, Modal, Alert, Table } from "react-bootstrap";
 import authHeader from "../../services/auth-header";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -50,7 +50,9 @@ const Centros = () => {
 
   async function getCurrentUser() {
     if (storageUser) {
-      await AuthService.getCurrentUser(storageUser.token).then((response) => setcurrentUser(response));
+      await AuthService.getCurrentUser(storageUser.token).then((response) =>
+        setcurrentUser(response)
+      );
     }
   }
 
@@ -62,7 +64,8 @@ const Centros = () => {
 
   function handleSubmit() {
     if (nomeFreguesia !== "" || nomeDistrito !== "" || codigoPostal !== "") {
-      const baseUrl = "https://softinsa-reunions-back.herokuapp.com/localizacoes/register";
+      const baseUrl =
+        "https://backend-pint2022.herokuapp.com/localizacoes/register";
       const datapost = {
         freguesia: nomeFreguesia,
         distrito: nomeDistrito,
@@ -85,7 +88,9 @@ const Centros = () => {
   }
 
   function handleDeleteLocal(idtoDelete) {
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/localizacoes/delete/" + idtoDelete;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/localizacoes/delete/" +
+      idtoDelete;
     axios
       .delete(baseUrl, { headers: authHeader() })
       .then((response) => {
@@ -114,7 +119,9 @@ const Centros = () => {
 
   useEffect(() => {
     axios
-      .get("https://softinsa-reunions-back.herokuapp.com/localizacoes/list", { headers: authHeader() })
+      .get("https://backend-pint2022.herokuapp.com/localizacoes/list", {
+        headers: authHeader(),
+      })
       .then((res) => {
         if (res.data.success) {
           setlocalizacaoList(res.data.data);
@@ -126,7 +133,9 @@ const Centros = () => {
         setError(error.toString());
       });
 
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/user/passwordNeedsUpdate/" + storageUser.token;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/user/passwordNeedsUpdate/" +
+      storageUser.token;
     axios
       .post(baseUrl, { headers: authHeader() })
       .then((response) => {
@@ -142,112 +151,135 @@ const Centros = () => {
 
   return (
     <>
-      <div className="home">
-        <Sidebar />
-        <div className="homeContainer">
-          <Navbar title="Localizações" user={currentUser} />
-          <div className="pageContent">
-            <div className="menu-wrapper">
-              <Button onClick={handleShow1} sx={{ marginRight: 1 }} variant="contained" endIcon={<AddCircleOutlineIcon />}>
-                Criar Nova Localização
-              </Button>
-            </div>
-            <div className="content-wrapper">
-              <div className="card-wrapper row">
-                {localizacaoList?.map((localizacao, index) => (
-                  <div className="card-item col-4" key={localizacao.id_local}>
-                    <Card className="card_localizacoes" sx={{ height: "fit-content" }}>
-                      <CardContent>
-                        <Typography sx={{ fontWeight: "bold" }} gutterBottom variant="h5" component="div">
-                          {localizacao.freguesia}
-                        </Typography>
-                        <Typography sx={{ padding: "1%" }} variant="body2" color="text.secondary" component="div">
-                          {localizacao.codigopostal}
-                        </Typography>
-                      </CardContent>
-                      <CardActions sx={{ display: "flex", justifyContent: "flex-end" }}>
-                        <Button sx={{ marginRight: "8px" }} href={"/editarLocal/" + localizacao.id_local} size="small" variant="outlined" color="success">
-                          Editar
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setLocaltoDelete(localizacao);
-                            handleShow2();
-                          }}
-                          size="small"
-                          variant="outlined"
-                          color="error"
-                        >
-                          Eliminar
-                        </Button>
-                      </CardActions>
-                    </Card>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+      <Navbar title="Localizações" user={currentUser} />
+      <div className="d-flex gap-2 w-25 my-2 mx-auto">
+        <button className="btn btn-primary h-100" onClick={handleShow1}>
+          Criar
+        </button>
       </div>
+      <Table className="w-50 mx-auto" striped bordered hover>
+        <thead>
+          <tr>
+            <th>Localização</th>
+            <th>Código Postal</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {localizacaoList?.map((localizacao, index) => (
+            <tr>
+              <td>{localizacao.freguesia}</td>
+              <td>{localizacao.codigopostal}</td>
+              <td>
+                <div className="d-flex w-50 gap-2">
+                  <a
+                    className="btn btn-primary h-100"
+                    sx={{ marginRight: "8px" }}
+                    href={"/editarLocal/" + localizacao.id_local}
+                  >
+                    Editar
+                  </a>
+                  <button
+                    className="btn btn-danger h-100"
+                    onClick={() => {
+                      setLocaltoDelete(localizacao);
+                      handleShow2();
+                    }}
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
 
       <Modal show={show1} onHide={handleClose1} dialogClassName="modal-90w">
         <Form noValidate validated={validated} onSubmit={checkSubmitValues}>
           <Modal.Header closeButton>
-            <Modal.Title style={{ color: "gray", fontsize: "25px", fontWeight: "bold" }}>Criar Localização</Modal.Title>
+            <Modal.Title style={{ fontsize: "25px", fontWeight: "bold" }}>
+              Nova Localização
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Card className="card-modal" style={{ height: "fit-content" }}>
-              <Card.Body>
-                <Form.Group className="mb-3" controlId="nomeFreguesia">
-                  <Form.Label>Freguesia</Form.Label>
-                  <Form.Control required type="text" placeholder="Introduza nome da freguesia" onChange={(value) => setNomeFreguesia(value.target.value)} />
-                  <Form.Control.Feedback type="invalid">Insira o nome da freguesia.</Form.Control.Feedback>
-                </Form.Group>
+            <Form.Group className="mb-3" controlId="nomeFreguesia">
+              <Form.Control
+                required
+                type="text"
+                placeholder="Freguesia"
+                onChange={(value) => setNomeFreguesia(value.target.value)}
+              />
+              <Form.Control.Feedback type="invalid">
+                Insira o nome da freguesia.
+              </Form.Control.Feedback>
+            </Form.Group>
 
-                <Form.Group className="mb-3" controlId="nomeDistrito">
-                  <Form.Label>Distrito</Form.Label>
-                  <Form.Control required type="text" placeholder="Introduza nome do distrito" onChange={(value) => setNomeDistrito(value.target.value)} />
-                  <Form.Control.Feedback type="invalid">Insira o nome do distrito.</Form.Control.Feedback>
-                </Form.Group>
+            <Form.Group className="mb-3" controlId="nomeDistrito">
+              <Form.Control
+                required
+                type="text"
+                placeholder="Distrito"
+                onChange={(value) => setNomeDistrito(value.target.value)}
+              />
+              <Form.Control.Feedback type="invalid">
+                Insira o nome do distrito.
+              </Form.Control.Feedback>
+            </Form.Group>
 
-                <Form.Group className="mb-3" controlId="codigoPostal">
-                  <Form.Label>Codigo-Postal</Form.Label>
-                  <Form.Control required type="text" placeholder="Ex: 3000-999" onChange={(value) => setCodigoPostal(value.target.value)} />
-                  <Form.Control.Feedback type="invalid">Insira o código postal.</Form.Control.Feedback>
-                </Form.Group>
-              </Card.Body>
-            </Card>
+            <Form.Group className="mb-3" controlId="codigoPostal">
+              <Form.Control
+                required
+                type="text"
+                placeholder="Código Postal (ex: 99999-999)"
+                onChange={(value) => setCodigoPostal(value.target.value)}
+              />
+              <Form.Control.Feedback type="invalid">
+                Insira o código postal.
+              </Form.Control.Feedback>
+            </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button type="submit" sx={{ marginRight: 1 }} variant="outlined" color="success">
-              Criar Localização
-            </Button>
-            <Button onClick={handleClose1} sx={{ marginRight: 1 }} variant="outlined" color="error">
-              Fechar
-            </Button>
+            <div className="d-flex gap-2">
+              <button
+                className="btn btn-primary h-100"
+                type="submit"
+                sx={{ marginRight: 1 }}
+              >
+                Criar
+              </button>
+              <button
+                className="btn btn-danger h-100"
+                onClick={handleClose1}
+                sx={{ marginRight: 1 }}
+              >
+                Voltar
+              </button>
+            </div>
           </Modal.Footer>
         </Form>
       </Modal>
 
       <Modal show={show2} onHide={handleClose2} dialogClassName="modal-90w">
         <Form>
-          <Modal.Header closeButton>
-            <Modal.Title style={{ color: "gray", fontsize: "25px", fontWeight: "bold" }}>Eliminar Localização</Modal.Title>
-          </Modal.Header>
           <Modal.Body>
-            <Card className="card-modal" style={{ height: "fit-content" }}>
-              <Card.Body>
-                <div style={{ fontSize: "20px" }}> Tem a certeza que quer eliminar a localização de {localtoDelete.freguesia}?</div>
-              </Card.Body>
-            </Card>
+            <div className="h3">
+              Tem a certeza que quer eliminar "{localtoDelete.freguesia}" da
+              lista de localizações?
+            </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button onClick={() => handleDeleteLocal(localtoDelete.id_local)} sx={{ marginRight: 1 }} variant="outlined" color="success">
-              Eliminar
-            </Button>
-            <Button onClick={handleClose2} sx={{ marginRight: 1 }} variant="outlined" color="error">
-              Fechar
-            </Button>
+            <div className="d-flex gap-2">
+              <button
+                className="btn btn-warning h-100"
+                onClick={() => handleDeleteLocal(localtoDelete.id_local)}
+              >
+                Eliminar
+              </button>
+              <button className="btn btn-danger h-100" onClick={handleClose2}>
+                Fechar
+              </button>
+            </div>
           </Modal.Footer>
         </Form>
       </Modal>
@@ -261,7 +293,9 @@ const Centros = () => {
         dialogClassName="modal-90w"
       >
         <Modal.Body style={{ backgroundColor: "light-green", border: "0" }}>
-          <h5 style={{ display: "flex", justifyContent: "center" }}>Localização eliminada com sucesso.</h5>
+          <h5 style={{ display: "flex", justifyContent: "center" }}>
+            Localização eliminada com sucesso.
+          </h5>
         </Modal.Body>
       </Modal>
 
@@ -274,7 +308,9 @@ const Centros = () => {
         dialogClassName="modal-90w"
       >
         <Modal.Body style={{ backgroundColor: "light-green", border: "0" }}>
-          <h5 style={{ display: "flex", justifyContent: "center" }}>Localização inserida com sucesso.</h5>
+          <h5 style={{ display: "flex", justifyContent: "center" }}>
+            Localização inserida com sucesso.
+          </h5>
         </Modal.Body>
       </Modal>
     </>

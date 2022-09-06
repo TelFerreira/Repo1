@@ -8,7 +8,7 @@ import Navbar from "../../components/Navbar/index";
 import axios from "axios";
 import authHeader from "../../services/auth-header";
 import Button from "@mui/material/Button";
-import { Card, Form, Modal } from "react-bootstrap";
+import { Card, Form, FormGroup, Modal } from "react-bootstrap";
 import { FcBusinessman, FcDepartment, FcTemplate } from "react-icons/fc";
 
 import NumeroReservas from "../../components/Charts/numeroReservasByDate";
@@ -27,10 +27,15 @@ const Dashboard = () => {
   const [numberOfCenters, setNumberOfCenters] = useState(0);
   const [salaMostPopular, setSalaMostPopular] = useState("Indeterminada");
 
-  const [inicioQtyReserva, setInicioQtyReserva] = useState(new Date().toISOString().slice(0, 10));
-  const [fimQtyReserva, setFimQtyReserva] = useState(dayPlusSeven(new Date()).toISOString().slice(0, 10));
+  const [inicioQtyReserva, setInicioQtyReserva] = useState(
+    new Date().toISOString().slice(0, 10)
+  );
+  const [fimQtyReserva, setFimQtyReserva] = useState(
+    dayPlusSeven(new Date()).toISOString().slice(0, 10)
+  );
 
-  const [capacityPercentMostUsedSalas, setCapacityPercentMostUsedSalas] = useState("");
+  const [capacityPercentMostUsedSalas, setCapacityPercentMostUsedSalas] =
+    useState("");
   const [listaCapacidades, setListaCapacidades] = useState([]);
 
   const [listaSalas, setListaSalas] = useState([]);
@@ -43,13 +48,18 @@ const Dashboard = () => {
 
   useEffect(() => {
     document.title = "Softinsa Reunions";
-    if (storageUser) AuthService.getCurrentUser(storageUser.token).then((response) => setUser(response));
+    if (storageUser)
+      AuthService.getCurrentUser(storageUser.token).then((response) =>
+        setUser(response)
+      );
 
     if (!storageUser) {
       navigate("/login");
     }
 
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/user/passwordNeedsUpdate/" + storageUser.token;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/user/passwordNeedsUpdate/" +
+      storageUser.token;
     axios
       .post(baseUrl, { headers: authHeader() })
       .then((response) => {
@@ -62,7 +72,8 @@ const Dashboard = () => {
       });
 
     function getnumberOfUsers() {
-      const numberOfUsersUrl = "https://softinsa-reunions-back.herokuapp.com/user/getNumberOfUsers";
+      const numberOfUsersUrl =
+        "https://backend-pint2022.herokuapp.com/user/getNumberOfUsers";
       axios
         .get(numberOfUsersUrl, { headers: authHeader() })
         .then((response) => {
@@ -76,7 +87,8 @@ const Dashboard = () => {
     }
 
     function getnumberOfCenters() {
-      const numberOfCentersUrl = "https://softinsa-reunions-back.herokuapp.com/centros/getNumberOfCenters";
+      const numberOfCentersUrl =
+        "https://backend-pint2022.herokuapp.com/centros/getNumberOfCenters";
       axios
         .get(numberOfCentersUrl, { headers: authHeader() })
         .then((response) => {
@@ -90,7 +102,8 @@ const Dashboard = () => {
     }
 
     function getSalaMostPopular() {
-      const getSalaMostPopular = "https://softinsa-reunions-back.herokuapp.com/reservas/getSalaMostPopular";
+      const getSalaMostPopular =
+        "https://backend-pint2022.herokuapp.com/reservas/getSalaMostPopular";
       axios
         .get(getSalaMostPopular, { headers: authHeader() })
         .then((response) => {
@@ -105,7 +118,10 @@ const Dashboard = () => {
 
     function getListOfUniqueAlocacao_maxima() {
       axios
-        .get("https://softinsa-reunions-back.herokuapp.com/salas/listUniqueAlocacao_maxima", { headers: authHeader() })
+        .get(
+          "https://backend-pint2022.herokuapp.com/salas/listUniqueAlocacao_maxima",
+          { headers: authHeader() }
+        )
         .then((res) => {
           if (res.data.success) {
             setListaCapacidades(res.data.data);
@@ -120,7 +136,9 @@ const Dashboard = () => {
 
     function getSalasList() {
       axios
-        .get("https://softinsa-reunions-back.herokuapp.com/salas/list", { headers: authHeader() })
+        .get("https://backend-pint2022.herokuapp.com/salas/list", {
+          headers: authHeader(),
+        })
         .then((res) => {
           if (res.data.success) {
             setListaSalas(res.data.data);
@@ -135,7 +153,10 @@ const Dashboard = () => {
 
     function getCentrosData() {
       axios
-        .get("https://softinsa-reunions-back.herokuapp.com/centros/listActiveCenters", { headers: authHeader() })
+        .get(
+          "https://backend-pint2022.herokuapp.com/centros/listActiveCenters",
+          { headers: authHeader() }
+        )
         .then((res) => {
           if (res.data.success) {
             setListaCentros(res.data.data);
@@ -168,68 +189,76 @@ const Dashboard = () => {
 
   return (
     <div className="home">
-      <Sidebar />
       <div className="homeContainer">
         <Navbar title="Dashboard" user={user} />
         <div className="pageContent">
           <div className="featured">
             <div className="featuredItem">
-              <span className="featuredTitle">Utilizadores Registados</span>
-              <div className="featured-wrapper">
-                <div className="featuredInfoContainer">
-                  <span className="featuredInfoValue">{numberOfUsers}</span>
-                </div>
-                <div className="featuredInfoIcon">
-                  <FcBusinessman style={{ height: "100px", width: "100px" }} />
+              <div className="d-flex">
+                <span
+                  className="featuredTitle"
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  Numero de Reservas:
+                </span>
+                <div
+                  className="d-flex gap-2 ml-auto"
+                  style={{ width: "fit-content", marginLeft: "auto" }}
+                >
+                  <Form.Group
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      minWidth: "200px",
+                    }}
+                  >
+                    <label className="mx-2">Início:</label>
+                    <input
+                      className="form-control"
+                      type="date"
+                      id="qtyReservaStart"
+                      max={fimQtyReserva}
+                      onChange={(value) =>
+                        setInicioQtyReserva(value.target.value)
+                      }
+                      value={inicioQtyReserva}
+                    />
+                  </Form.Group>
+                  <Form.Group
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      minWidth: "200px",
+                    }}
+                  >
+                    <label className="mx-2">Fim:</label>
+                    <input
+                      className="form-control"
+                      type="date"
+                      id="qtyReservaEnd"
+                      min={inicioQtyReserva}
+                      onChange={(value) => setFimQtyReserva(value.target.value)}
+                      value={fimQtyReserva}
+                    />
+                  </Form.Group>
+                  <button
+                    className="btn btn-danger h-100"
+                    style={{ width: "fit-content" }}
+                    onClick={() => qtyReservaResetDate()}
+                  >
+                    Reset
+                  </button>
                 </div>
               </div>
-            </div>
-            <div className="featuredItem">
-              <span className="featuredTitle">Centros Controlados</span>
-              <div className="featured-wrapper">
-                <div className="featuredInfoContainer">
-                  <span className="featuredInfoValue">{numberOfCenters}</span>
-                </div>
-                <div className="featuredInfoIcon">
-                  <FcDepartment style={{ height: "100px", width: "100px" }} />
-                </div>
-              </div>
-            </div>
-            <div className="featuredItem">
-              <span className="featuredTitle">Sala mais Popular</span>
-              <div className="featured-wrapper">
-                <div className="featuredInfoContainer">
-                  <span className="featuredInfoValue">Sala {salaMostPopular}</span>
-                </div>
-                <div className="featuredInfoIcon">
-                  <FcTemplate style={{ height: "100px", width: "100px" }} />
-                </div>
-              </div>
-            </div>
-          </div>
-          <span></span>
-          <div className="featured">
-            <div className="featuredItem">
-              <span className="featuredTitle">Quantidade de Reservas: </span>
               <div className="featuredInfoContainer">
-                <NumeroReservas dataIncial={inicioQtyReserva} dataFinal={fimQtyReserva} />
-              </div>
-              <div className="featuredInfoContainer" style={{ justifyContent: "space-evenly" }}>
-                <div>
-                  Start:
-                  <input type="date" id="qtyReservaStart" max={fimQtyReserva} onChange={(value) => setInicioQtyReserva(value.target.value)} value={inicioQtyReserva} />
-                </div>
-                <div>
-                  End:
-                  <input type="date" id="qtyReservaEnd" min={inicioQtyReserva} onChange={(value) => setFimQtyReserva(value.target.value)} value={fimQtyReserva} />
-                </div>
-                <Button variant="outlined" color="error" onClick={() => qtyReservaResetDate()}>
-                  Reset
-                </Button>
+                <NumeroReservas
+                  dataIncial={inicioQtyReserva}
+                  dataFinal={fimQtyReserva}
+                />
               </div>
             </div>
             <div className="featuredItem">
-              <span className="featuredTitle">% Alocação Diária, com visão mensal </span>
+              <span className="featuredTitle">Alocação Diária</span>
               <div className="featuredInfoContainer">
                 <PercentAllocationMonthly />
               </div>
@@ -238,37 +267,16 @@ const Dashboard = () => {
           <span></span>
           <div className="featured">
             <div className="featuredItem">
-              <span className="featuredTitle" style={{ display: "flex", justifyContent: "space-between" }}>
-                % Salas mais utilizadas face à capacidade
-                <div style={{ marginRight: "12px" }}>
-                  <Form.Group className="mb-2">
-                    <Form.Select required defaultValue={0} onChange={(value) => setCapacityPercentMostUsedSalas(value.target.value)}>
-                      <option hidden value={0}>
-                        Escolha uma capacidade
-                      </option>
-                      {listaCapacidades?.map((capacidade, index) => (
-                        <option key={index} value={capacidade.alocacao_maxima}>
-                          {capacidade.alocacao_maxima}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
-                </div>
-              </span>
-              <div className="featuredInfoContainer">
-                <PercentMostUsedSalasByCapacity capacidade={capacityPercentMostUsedSalas} />
-              </div>
-              <div className="featuredInfoContainer"></div>
-            </div>
-          </div>
-          <span></span>
-          <div className="featured">
-            <div className="featuredItem">
-              <span className="featuredTitle" style={{ display: "flex", justifyContent: "space-between" }}>
-                Reservas da sala (Hoje/Amanhã):
+              <span
+                className="featuredTitle"
+                style={{ display: "flex", justifyContent: "space-between" }}
+              >
+                Reservas:
                 <div>
-                  <Form.Group className="mb-2" style={{ display: "flex", alignItems: "flex-start" }}>
-                    <label>Centro:</label>
+                  <Form.Group
+                    className="mb-2"
+                    style={{ display: "flex", alignItems: "flex-start" }}
+                  >
                     <Form.Select
                       style={{ marginLeft: "8px", marginRight: "12px" }}
                       required
@@ -280,7 +288,7 @@ const Dashboard = () => {
                       }}
                     >
                       <option hidden value={0}>
-                        Escolha...
+                        Centro
                       </option>
                       {listaCentros?.map((centro, index) => (
                         <option key={index} value={centro.id_centro}>
@@ -288,7 +296,6 @@ const Dashboard = () => {
                         </option>
                       ))}
                     </Form.Select>
-                    <label> Sala: </label>
                     <Form.Select
                       style={{ marginLeft: "8px", marginRight: "12px" }}
                       id="escolhaSala"
@@ -298,7 +305,7 @@ const Dashboard = () => {
                       onChange={(value) => setSalaReserva(value.target.value)}
                     >
                       <option hidden value={0}>
-                        Escolha...
+                        Sala
                       </option>
                       {listaSalas
                         ?.filter((sala) => sala.id_centro == centroReserva)
@@ -312,21 +319,31 @@ const Dashboard = () => {
                 </div>
               </span>
               <div className="featuredInfoContainer">
-                <RealDataFromSala salaSelecionada={salaReserva} centroSelecionado={centroReserva} />
+                <RealDataFromSala
+                  salaSelecionada={salaReserva}
+                  centroSelecionado={centroReserva}
+                />
               </div>
             </div>
-          </div>
-          <span />
-          <div className="featured">
             <div className="featuredItem">
-              <span className="featuredTitle" style={{ display: "flex", justifyContent: "space-between" }}>
-                Salas em limpeza (Por Centro):
+              <span
+                className="featuredTitle"
+                style={{ display: "flex", justifyContent: "space-between" }}
+              >
+                Salas em limpeza
                 <div>
-                  <Form.Group className="mb-2" style={{ display: "flex", alignItems: "flex-start" }}>
-                    <label>Centro:</label>
-                    <Form.Select style={{ marginLeft: "8px", marginRight: "12px" }} required defaultValue={0} onChange={(value) => setCentroLimpeza(value.target.value)}>
+                  <Form.Group
+                    className="mb-2"
+                    style={{ display: "flex", alignItems: "flex-start" }}
+                  >
+                    <Form.Select
+                      style={{ marginLeft: "8px", marginRight: "12px" }}
+                      required
+                      defaultValue={0}
+                      onChange={(value) => setCentroLimpeza(value.target.value)}
+                    >
                       <option hidden value={0}>
-                        Escolha...
+                        Centro
                       </option>
                       {listaCentros?.map((centro, index) => (
                         <option key={index} value={centro.id_centro}>
@@ -340,6 +357,43 @@ const Dashboard = () => {
               <div className="featuredInfoContainer">
                 <SalaLimpeza centroSelecionada={centroLimpeza} />
               </div>
+            </div>
+          </div>
+          <span></span>
+          <div className="featured">
+            <div className="featuredItem">
+              <span
+                className="featuredTitle"
+                style={{ display: "flex", justifyContent: "space-between" }}
+              >
+                Salas mais utilizadas
+                <div style={{ marginRight: "12px" }}>
+                  <Form.Group className="mb-2">
+                    <Form.Select
+                      required
+                      defaultValue={0}
+                      onChange={(value) =>
+                        setCapacityPercentMostUsedSalas(value.target.value)
+                      }
+                    >
+                      <option hidden value={0}>
+                        Capacidade
+                      </option>
+                      {listaCapacidades?.map((capacidade, index) => (
+                        <option key={index} value={capacidade.alocacao_maxima}>
+                          {capacidade.alocacao_maxima}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                </div>
+              </span>
+              <div className="featuredInfoContainer">
+                <PercentMostUsedSalasByCapacity
+                  capacidade={capacityPercentMostUsedSalas}
+                />
+              </div>
+              <div className="featuredInfoContainer"></div>
             </div>
           </div>
         </div>

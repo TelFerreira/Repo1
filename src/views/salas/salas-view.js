@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Card, Form, Modal } from "react-bootstrap";
+import { Card, Form, Modal, Table } from "react-bootstrap";
 import authHeader from "../../services/auth-header";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -45,7 +45,10 @@ const Salas = () => {
   const [centro, setCentro] = useState([]);
 
   function getCurrentUser() {
-    if (storageUser) AuthService.getCurrentUser(storageUser.token).then((response) => setcurrentUser(response));
+    if (storageUser)
+      AuthService.getCurrentUser(storageUser.token).then((response) =>
+        setcurrentUser(response)
+      );
   }
 
   function isUserLogged() {
@@ -55,8 +58,15 @@ const Salas = () => {
   }
 
   function handleSubmit() {
-    if (nomeSala !== "" && descricao !== "" && alocacaoMaxima !== "" && alocacao_percent !== "" && tempoLimpeza != "" && centro.length != 0) {
-      const baseUrl = "https://softinsa-reunions-back.herokuapp.com/salas/register";
+    if (
+      nomeSala !== "" &&
+      descricao !== "" &&
+      alocacaoMaxima !== "" &&
+      alocacao_percent !== "" &&
+      tempoLimpeza != "" &&
+      centro.length != 0
+    ) {
+      const baseUrl = "https://backend-pint2022.herokuapp.com/salas/register";
       const datapost = {
         nomesala: nomeSala,
         descricao: descricao,
@@ -82,7 +92,8 @@ const Salas = () => {
   }
 
   function handleDeleteSala(idtoDelete) {
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/salas/delete/" + idtoDelete;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/salas/delete/" + idtoDelete;
     axios
       .delete(baseUrl, { headers: authHeader() })
       .then((response) => {
@@ -112,7 +123,9 @@ const Salas = () => {
   useEffect(() => {
     function getSalasList() {
       axios
-        .get("https://softinsa-reunions-back.herokuapp.com/salas/list", { headers: authHeader() })
+        .get("https://backend-pint2022.herokuapp.com/salas/list", {
+          headers: authHeader(),
+        })
         .then((res) => {
           if (res.data.success) {
             setsalaList(res.data.data);
@@ -126,7 +139,10 @@ const Salas = () => {
     }
     function getCentrosData() {
       axios
-        .get("https://softinsa-reunions-back.herokuapp.com/centros/listActiveCenters", { headers: authHeader() })
+        .get(
+          "https://backend-pint2022.herokuapp.com/centros/listActiveCenters",
+          { headers: authHeader() }
+        )
         .then((res) => {
           if (res.data.success) {
             setListaCentro(res.data.data);
@@ -139,7 +155,9 @@ const Salas = () => {
         });
     }
 
-    const baseUrl = "https://softinsa-reunions-back.herokuapp.com/user/passwordNeedsUpdate/" + storageUser.token;
+    const baseUrl =
+      "https://backend-pint2022.herokuapp.com/user/passwordNeedsUpdate/" +
+      storageUser.token;
     axios
       .post(baseUrl, { headers: authHeader() })
       .then((response) => {
@@ -157,123 +175,166 @@ const Salas = () => {
 
   return (
     <>
-      <div className="home">
-        <Sidebar />
-        <div className="homeContainer">
-          <Navbar title="Salas" user={currentUser} />
-          <div className="pageContent">
-            <div className="menu-wrapper">
-              <Button onClick={handleShow1} sx={{ marginRight: 1 }} variant="contained" endIcon={<AddCircleOutlineIcon />}>
-                Criar Nova Sala
-              </Button>
-            </div>
-            <div className="content-wrapper">
-              <div className="card-wrapper row">
-                {salaList?.map((sala, index) => (
-                  <div className="card-item col-4" key={sala.id_sala}>
-                    <Card className="card_salas" sx={{ height: "fit-content" }}>
-                      <CardContent>
-                        <Typography sx={{ fontWeight: "bold" }} gutterBottom variant="h5" component="div">
-                          {"Sala " + sala.nomesala}
-                        </Typography>
-                        <Typography sx={{ padding: "1%" }} variant="body2" color="text.secondary" component="div">
-                          {sala.activeStatus ? (
-                            <div>
-                              <span className="dot-active" /> Ativa{" "}
-                            </div>
-                          ) : (
-                            <div>
-                              <span className="dot-inactive" /> Inativa{" "}
-                            </div>
-                          )}
-                        </Typography>
-                      </CardContent>
-                      <CardActions sx={{ display: "flex", justifyContent: "flex-end" }}>
-                        <Button sx={{ marginRight: "8px" }} href={"/editarSala/" + sala.id_sala} size="small" variant="outlined" color="success">
-                          Editar
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setSalatoDelete(sala);
-                            handleShow2();
-                          }}
-                          size="small"
-                          variant="outlined"
-                          color="error"
-                        >
-                          Eliminar
-                        </Button>
-                      </CardActions>
-                    </Card>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+      <Navbar title="Salas" user={currentUser} />
+      <div className="d-flex gap-2 w-25 my-2 mx-auto">
+        <button className="btn btn-primary h-100" onClick={handleShow1}>
+          Criar
+        </button>
       </div>
+      <Table className="w-75 mx-auto" striped bordered hover>
+        <thead>
+          <tr>
+            <th>Sala</th>
+            <th>Estado</th>
+            <th>Descrição</th>
+            <th>Alocação Máxima</th>
+            <th>Disponível</th>
+            <th>Tempo Limpeza</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {salaList?.map((sala, index) => (
+            <tr>
+              <td>{sala.nomesala}</td>
+              <td>
+                {sala.activeStatus ? (
+                  <div>
+                    <span className="dot-active" /> Ativa{" "}
+                  </div>
+                ) : (
+                  <div>
+                    <span className="dot-inactive" /> Inativa{" "}
+                  </div>
+                )}
+              </td>
+              <td>{sala.descricao}</td>
+              <td>{sala.alocacao_maxima}</td>
+              <td>{sala.alocacao_percent}</td>
+              <td>{sala.tempo_limpeza}</td>
+              <td>
+                <div className="d-flex gap-2">
+                  <a
+                    className="btn btn-primary h-100"
+                    sx={{ marginRight: "8px" }}
+                    href={"/editarSala/" + sala.id_sala}
+                  >
+                    Editar
+                  </a>
+                  <button
+                    className="btn btn-danger h-100"
+                    onClick={() => {
+                      setSalatoDelete(sala);
+                      handleShow2();
+                    }}
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
 
       <Modal show={show1} onHide={handleClose1} dialogClassName="modal-90w">
         <Form noValidate validated={validated} onSubmit={checkSubmitValues}>
           <Modal.Header closeButton>
-            <Modal.Title style={{ color: "gray", fontsize: "25px", fontWeight: "bold" }}>Criar Sala</Modal.Title>
+            <Modal.Title>Nova Sala</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Card className="card-modal" style={{ height: "fit-content" }}>
-              <Card.Body>
-                <Form.Group className="mb-3" controlId="nomeCentro">
-                  <Form.Label>Nome Sala</Form.Label>
-                  <Form.Control required type="text" placeholder="Introduza nome" onChange={(value) => setNomeSala(value.target.value)} />
-                  <Form.Control.Feedback type="invalid">Insira um nome.</Form.Control.Feedback>
-                </Form.Group>
+            <Form.Group className="mb-3" controlId="nomeCentro">
+              <Form.Control
+                required
+                type="text"
+                placeholder="Nome"
+                onChange={(value) => setNomeSala(value.target.value)}
+              />
+              <Form.Control.Feedback type="invalid">
+                Campo obrigatório.
+              </Form.Control.Feedback>
+            </Form.Group>
 
-                <Form.Group className="mb-3" controlId="descricao">
-                  <Form.Label>Descrição</Form.Label>
-                  <Form.Control required type="text" placeholder="Introduza descrição" onChange={(value) => setDescricao(value.target.value)} />
-                  <Form.Control.Feedback type="invalid">Insira uma descrição.</Form.Control.Feedback>
-                </Form.Group>
+            <Form.Group className="mb-3" controlId="descricao">
+              <Form.Control
+                required
+                type="text"
+                placeholder="Descrição"
+                onChange={(value) => setDescricao(value.target.value)}
+              />
+              <Form.Control.Feedback type="invalid">
+                Campo Obrigatório.
+              </Form.Control.Feedback>
+            </Form.Group>
 
-                <Form.Group className="mb-3" controlId="alocacaoMaxima">
-                  <Form.Label>Alocação Sala (nr.)</Form.Label>
-                  <Form.Control required type="text" placeholder="Introduza alocação da sala" onChange={(value) => setalocacaoMaxima(value.target.value)} />
-                  <Form.Control.Feedback type="invalid">Insira a alocação da sala.</Form.Control.Feedback>
-                </Form.Group>
+            <div className="d-flex gap-2">
+              <Form.Group className="mb-3" controlId="alocacaoMaxima">
+                <Form.Control
+                  required
+                  type="text"
+                  placeholder="Alocação (ex:10)"
+                  onChange={(value) => setalocacaoMaxima(value.target.value)}
+                />
+                <Form.Control.Feedback type="invalid">
+                  Campo obrigatório
+                </Form.Control.Feedback>
+              </Form.Group>
 
-                <Form.Group className="mb-3" controlId="alocacao_percent">
-                  <Form.Label>Alocação da sala (%)</Form.Label>
-                  <Form.Control required type="text" placeholder="Insira a %  de alocação da sala." onChange={(value) => setalocacao_percent(value.target.value)} />
-                  <Form.Control.Feedback type="invalid">Insira a % de alocação da sala.</Form.Control.Feedback>
-                </Form.Group>
+              <Form.Group className="mb-3 w-100" controlId="alocacao_percent">
+                <Form.Control
+                  required
+                  type="text"
+                  placeholder="Alocação máxima em % (ex:50)"
+                  onChange={(value) => setalocacao_percent(value.target.value)}
+                />
+                <Form.Control.Feedback type="invalid">
+                  Campo Obrigatório.
+                </Form.Control.Feedback>
+              </Form.Group>
+            </div>
+            <div className="d-flex gap-2">
+              <Form.Group className="mb-3 w-100" controlId="tempoLimpeza">
+                <Form.Control
+                  required
+                  type="text"
+                  placeholder="Tempo de limpeza (ex:30) em minutos"
+                  onChange={(value) => settempoLimpeza(value.target.value)}
+                />
+                <Form.Control.Feedback type="invalid">
+                  Campo Obrigatório.
+                </Form.Control.Feedback>
+              </Form.Group>
 
-                <Form.Group className="mb-3" controlId="tempoLimpeza">
-                  <Form.Label>Tempo de Limpeza (min.)</Form.Label>
-                  <Form.Control required type="text" placeholder="Introduza o tempo de limpeza da sala" onChange={(value) => settempoLimpeza(value.target.value)} />
-                  <Form.Control.Feedback type="invalid">Insira o tempo de limpeza.</Form.Control.Feedback>
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Centro</Form.Label>
-                  <Form.Select required onChange={(value) => setCentro(value.target.value)}>
-                    <option hidden value={0}>
-                      Escolha um Centro
+              <Form.Group className="mb-3 w-50">
+                <Form.Select
+                  required
+                  onChange={(value) => setCentro(value.target.value)}
+                >
+                  <option hidden value={0}>
+                    Centro
+                  </option>
+                  {listacentro?.map((centro, index) => (
+                    <option key={index} value={centro.id_centro}>
+                      {centro.nomecentro}
                     </option>
-                    {listacentro?.map((centro, index) => (
-                      <option key={index} value={centro.id_centro}>
-                        {centro.nomecentro}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </Card.Body>
-            </Card>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button type="submit" sx={{ marginRight: 1 }} variant="outlined" color="success">
-              Criar Sala
-            </Button>
-            <Button onClick={handleClose1} sx={{ marginRight: 1 }} variant="outlined" color="error">
-              Fechar
-            </Button>
+            <div className="d-flex gap-2">
+              <button className="btn btn-success h-100" type="submit">
+                Criar
+              </button>
+              <button
+                className="btn btn-danger h-100"
+                onClick={handleClose1}
+                sx={{ marginRight: 1 }}
+              >
+                Voltar
+              </button>
+            </div>
           </Modal.Footer>
         </Form>
       </Modal>
@@ -281,20 +342,38 @@ const Salas = () => {
       <Modal show={show2} onHide={handleClose2} dialogClassName="modal-90w">
         <Form>
           <Modal.Header closeButton>
-            <Modal.Title style={{ color: "gray", fontsize: "25px", fontWeight: "bold" }}>Eliminar Sala</Modal.Title>
+            <Modal.Title
+              style={{ color: "gray", fontsize: "25px", fontWeight: "bold" }}
+            >
+              Eliminar Sala
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Card className="card-modal" style={{ height: "fit-content" }}>
               <Card.Body>
-                <div style={{ fontSize: "20px" }}> Tem a certeza que quer eliminar a sala de {salatoDelete.nomesala}?</div>
+                <div style={{ fontSize: "20px" }}>
+                  {" "}
+                  Tem a certeza que quer eliminar a sala de{" "}
+                  {salatoDelete.nomesala}?
+                </div>
               </Card.Body>
             </Card>
           </Modal.Body>
           <Modal.Footer>
-            <Button onClick={() => handleDeleteSala(salatoDelete.id_sala)} sx={{ marginRight: 1 }} variant="outlined" color="success">
+            <Button
+              onClick={() => handleDeleteSala(salatoDelete.id_sala)}
+              sx={{ marginRight: 1 }}
+              variant="outlined"
+              color="success"
+            >
               Eliminar
             </Button>
-            <Button onClick={handleClose2} sx={{ marginRight: 1 }} variant="outlined" color="error">
+            <Button
+              onClick={handleClose2}
+              sx={{ marginRight: 1 }}
+              variant="outlined"
+              color="error"
+            >
               Fechar
             </Button>
           </Modal.Footer>

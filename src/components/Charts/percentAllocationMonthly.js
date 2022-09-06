@@ -16,7 +16,7 @@ const PercentAllocationMonthly = () => {
 
   useEffect(() => {
     axios
-      .get("https://softinsa-reunions-back.herokuapp.com/reservas/percentAllocationMonthly", { headers: authHeader() })
+      .get("https://backend-pint2022.herokuapp.com/reservas/percentAllocationMonthly", { headers: authHeader() })
       .then((res) => {
         setValores(res.data.data);
       })
